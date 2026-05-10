@@ -31,4 +31,6 @@ RUN bundle config set path /app/docs/vendor/bundle && bundle install --gemfile=/
 # Change ownership of the app directory to the non-root user
 RUN chown -R $USERNAME:$USERNAME /app && chmod +x /entrypoint.sh
 
+USER $USERNAME
+
 CMD [ "/entrypoint.sh" ]

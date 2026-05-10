@@ -1,13 +1,25 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # This script is the entry point for the GitHub Action. It sets up the environment, builds the Jekyll site to the specified output directory, and handles any necessary configuration.
 
 # Set the input and output directories. The input directory is set on the action as an input as input_dir. The output directory is set on the action as an input as output_dir.
 # All paths are relative to GITHUB_WORKSPACE, which defaults to the current directory if not set.
 
+function resolve_workspace_path() {
+  local raw_path="$1"
+  # Keep absolute paths untouched; resolve relative paths under GITHUB_WORKSPACE.
+  if [[ "$raw_path" = /* ]]; then
+    echo "$raw_path"
+  else
+    echo "$GITHUB_WORKSPACE/$raw_path"
+  fi
+}
+
 GITHUB_WORKSPACE="${GITHUB_WORKSPACE:-.}"
-INPUT_DIR="${GITHUB_WORKSPACE}/${INPUT_INPUT_DIR:-.}"
-OUTPUT_DIR="${GITHUB_WORKSPACE}/${INPUT_OUTPUT_DIR:-_site}"
+INPUT_DIR="$(resolve_workspace_path "${INPUT_INPUT_DIR:-.}")"
+OUTPUT_DIR="$(resolve_workspace_path "${INPUT_OUTPUT_DIR:-_site}")"
 DRJEKYLL_DOCS_DIR="/app/docs"
 
 
@@ -223,6 +235,19 @@ function setup_drjekyll() {
   # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/header_custom.html files, as they are handled separately
   rsync -av --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"
 
+  # Ensure user config is present in the merged working directory.
+  if [ -f "$INPUT_DIR/_config.yml" ]; then
+    log_info "Syncing user config '$INPUT_DIR/_config.yml' to '$DRJEKYLL_DOCS_DIR/_config.yml'"
+    cp "$INPUT_DIR/_config.yml" "$DRJEKYLL_DOCS_DIR/_config.yml"
+  elif [ -f "$INPUT_DIR/_config.yaml" ]; then
+    log_info "Syncing user config '$INPUT_DIR/_config.yaml' to '$DRJEKYLL_DOCS_DIR/_config.yaml'"
+    cp "$INPUT_DIR/_config.yaml" "$DRJEKYLL_DOCS_DIR/_config.yaml"
+  else
+    log_warn "No _config.yml or _config.yaml found in input directory '$INPUT_DIR' during setup."
+  fi
+
+  log_info "Config exists after merge: _config.yml=$(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yml"), _config.yaml=$(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yaml")"
+
   setup_user_header_footer
 
   log_info "Header/footer customization files:"
@@ -237,7 +262,6 @@ function setup_drjekyll() {
     cp "$DRJEKYLL_DOCS_DIR/Gemfile" "$TEMP_GEMFILE"
     USER_GEMFILE="$TEMP_GEMFILE"
     log_info "No user Gemfile found. Using Dr. Jekyll Gemfile: $USER_GEMFILE"
-    group_end
   fi
 
   cp "$USER_GEMFILE" "$TEMP_GEMFILE"
@@ -281,9 +305,17 @@ function build_docs() {
     rm -rf "$OUTPUT_DIR"
   fi
 
-  # if the user files does not include a _config.yml file, we need to fail. DrJekyll does not define all the necessary configuration for Jekyll to build the site, so we need to ensure that the user provides a _config.yml file with the necessary configuration. If the user does not provide a _config.yml file, we will not be able to build the site, and we will fail with an error message.
+  # Validate that user input has config and that merged working directory has config.
+  if [ ! -f "$INPUT_DIR/_config.yml" ] && [ ! -f "$INPUT_DIR/_config.yaml" ]; then
+    log_error "Input directory '$INPUT_DIR' does not contain _config.yml or _config.yaml."
+    group_end
+    exit 1
+  fi
+
+  # DrJekyll working directory must contain the merged config used for build.
   if [ ! -f "$DRJEKYLL_DOCS_DIR/_config.yml" ] && [ ! -f "$DRJEKYLL_DOCS_DIR/_config.yaml" ]; then
-    log_error "Input directory '$INPUT_DIR' does not contain a _config.yml or _config.yaml file. Please provide one so Jekyll can build the site."
+    log_error "Merged docs directory '$DRJEKYLL_DOCS_DIR' does not contain _config.yml or _config.yaml after sync."
+    log_error "Input config presence: _config.yml=$(path_exists_msg "$INPUT_DIR/_config.yml"), _config.yaml=$(path_exists_msg "$INPUT_DIR/_config.yaml")"
     group_end
     exit 1
   fi
@@ -304,7 +336,7 @@ function build_docs() {
   log_info "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
   log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
   jekyll build \
-    --source "$INPUT_DIR" \
+    --source "$DRJEKYLL_DOCS_DIR" \
     --destination "$OUTPUT_DIR" \
     --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
 
