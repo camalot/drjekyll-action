@@ -235,6 +235,17 @@ function setup_drjekyll() {
   # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/header_custom.html files, as they are handled separately
   rsync -av --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"
 
+  group_start "DrJekyll docs immediately after merge"
+  log_info "Key files in input directory:"
+  log_info "INPUT _config.yml present: $(path_exists_msg "$INPUT_DIR/_config.yml")"
+  log_info "INPUT _config.yaml present: $(path_exists_msg "$INPUT_DIR/_config.yaml")"
+  log_info "INPUT index.md present: $(path_exists_msg "$INPUT_DIR/index.md")"
+  log_info "Key files in merged working directory:"
+  log_info "MERGED _config.yml present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yml")"
+  log_info "MERGED _config.yaml present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yaml")"
+  log_info "MERGED index.md present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/index.md")"
+  group_end
+
   # Ensure user config is present in the merged working directory.
   if [ -f "$INPUT_DIR/_config.yml" ]; then
     log_info "Syncing user config '$INPUT_DIR/_config.yml' to '$DRJEKYLL_DOCS_DIR/_config.yml'"
@@ -246,7 +257,11 @@ function setup_drjekyll() {
     log_warn "No _config.yml or _config.yaml found in input directory '$INPUT_DIR' during setup."
   fi
 
-  log_info "Config exists after merge: _config.yml=$(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yml"), _config.yaml=$(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yaml")"
+  group_start "DrJekyll docs after config sync"
+  log_info "Config exists after sync: _config.yml=$(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yml"), _config.yaml=$(path_exists_msg "$DRJEKYLL_DOCS_DIR/_config.yaml")"
+  log_info "Top-level merged docs listing after sync:"
+  ls -la "$DRJEKYLL_DOCS_DIR"
+  group_end
 
   setup_user_header_footer
 
