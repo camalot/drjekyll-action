@@ -139,16 +139,25 @@ function build_docs() {
   fi
 
   # if the user files does not include a _config.yml file, we need to fail. DrJekyll does not define all the necessary configuration for Jekyll to build the site, so we need to ensure that the user provides a _config.yml file with the necessary configuration. If the user does not provide a _config.yml file, we will not be able to build the site, and we will fail with an error message.
-  if [ ! -f "$DRJEKYLL_DOCS_DIR/_config.yml" ]; then
-    echo "Input directory '$INPUT_DIR' does not contain a _config.yml file. Please provide a _config.yml file with the necessary configuration for Jekyll to build the site." >&2
+  if [ ! -f "$DRJEKYLL_DOCS_DIR/_config.{yml,yaml}" ]; then
+    echo "Input directory '$INPUT_DIR' does not contain a _config.{yml,yaml} file. Please provide a _config.{yml,yaml} file with the necessary configuration for Jekyll to build the site." >&2
     exit 1
+  fi
+
+  # normalize the _config file name to _config.yml, as Jekyll will look for _config.yml by default. If the user provides a _config.yaml file, we will copy it to _config.yml in the drjekyll docs directory. This will allow Jekyll to find the configuration file and build the site successfully.
+  if [ -f "$DRJEKYLL_DOCS_DIR/_config.yaml" ] && [ ! -f "$DRJEKYLL_DOCS_DIR/_config.yml" ]; then
+    echo "Copying '$DRJEKYLL_DOCS_DIR/_config.yaml' to '$DRJEKYLL_DOCS_DIR/_config.yml'..."
+    cp "$DRJEKYLL_DOCS_DIR/_config.yaml" "$DRJEKYLL_DOCS_DIR/_config.yml"
   fi
 
   # Check if the input files contain the necessary configuration for drjekyll. If not, we will add the necessary configuration to the drjekyll docs directory. This will allow the Jekyll build to succeed even if the user does not provide the necessary configuration.
 
   # Build the Jekyll site
   echo "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
-  jekyll build --source "$INPUT_DIR" --destination "$OUTPUT_DIR" --config "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
+  jekyll build \
+    --source "$INPUT_DIR" \
+    --destination "$OUTPUT_DIR" \
+    --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
 }
 
 
