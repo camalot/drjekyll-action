@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -u  # Fail on undefined variables
+# (Removed 'e' and 'o pipefail' to allow commands with non-zero exits to be handled explicitly)
 
 # This script is the entry point for the GitHub Action. It sets up the environment, builds the Jekyll site to the specified output directory, and handles any necessary configuration.
 
@@ -233,7 +234,11 @@ function setup_drjekyll() {
 
   log_info "Merging input directory '$INPUT_DIR' with Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR'..."
   # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/header_custom.html files, as they are handled separately
-  rsync -av --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"
+  if ! rsync -av --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
+    log_error "rsync merge failed with exit code $?"
+    group_end
+    exit 1
+  fi
 
   group_start "DrJekyll docs immediately after merge"
   log_info "Key files in input directory:"
@@ -249,10 +254,18 @@ function setup_drjekyll() {
   # Ensure user config is present in the merged working directory.
   if [ -f "$INPUT_DIR/_config.yml" ]; then
     log_info "Syncing user config '$INPUT_DIR/_config.yml' to '$DRJEKYLL_DOCS_DIR/_config.yml'"
-    cp "$INPUT_DIR/_config.yml" "$DRJEKYLL_DOCS_DIR/_config.yml"
+    if ! cp "$INPUT_DIR/_config.yml" "$DRJEKYLL_DOCS_DIR/_config.yml"; then
+      log_error "Failed to copy user config _config.yml"
+      group_end
+      exit 1
+    fi
   elif [ -f "$INPUT_DIR/_config.yaml" ]; then
     log_info "Syncing user config '$INPUT_DIR/_config.yaml' to '$DRJEKYLL_DOCS_DIR/_config.yaml'"
-    cp "$INPUT_DIR/_config.yaml" "$DRJEKYLL_DOCS_DIR/_config.yaml"
+    if ! cp "$INPUT_DIR/_config.yaml" "$DRJEKYLL_DOCS_DIR/_config.yaml"; then
+      log_error "Failed to copy user config _config.yaml"
+      group_end
+      exit 1
+    fi
   else
     log_warn "No _config.yml or _config.yaml found in input directory '$INPUT_DIR' during setup."
   fi
@@ -304,7 +317,11 @@ function setup_drjekyll() {
   group_start "Bundle install"
   log_info "Installing gems for Jekyll build with Gemfile '$USER_GEMFILE'..."
   bundle config set --local path "$DRJEKYLL_DOCS_DIR/vendor/bundle"
-  bundle install --gemfile="$USER_GEMFILE"
+  if ! bundle install --gemfile="$USER_GEMFILE"; then
+    log_error "Bundle install failed with exit code $?"
+    group_end
+    exit 1
+  fi
   log_info "Bundle install complete."
   group_end
 
@@ -345,15 +362,23 @@ function build_docs() {
 
   # Update the destination in _config-drjekyll.yml to the actual output directory
   log_info "Setting destination in _config-drjekyll.yml to '$OUTPUT_DIR' using yq..."
-  yq eval ".destination = \"$OUTPUT_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
+  if ! yq eval ".destination = \"$OUTPUT_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    log_error "yq update failed with exit code $?"
+    group_end
+    exit 1
+  fi
 
   # Build the Jekyll site
   log_info "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
   log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
-  jekyll build \
+  if ! jekyll build \
     --source "$DRJEKYLL_DOCS_DIR" \
     --destination "$OUTPUT_DIR" \
-    --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
+    --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    log_error "Jekyll build failed with exit code $?"
+    group_end
+    exit 1
+  fi
 
   log_output_summary
   group_end
