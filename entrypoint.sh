@@ -384,7 +384,7 @@ function build_docs() {
   log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
   log_info "BUNDLE_GEMFILE: $BUNDLE_GEMFILE"
   log_info "BUNDLE_PATH: $BUNDLE_PATH"
-  if ! JEKYLL_ENV=production bundle exec jekyll build \
+  if ! bundle exec jekyll build \
     --source "$DRJEKYLL_DOCS_DIR" \
     --destination "$BUILD_TMP_DIR" \
     --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
