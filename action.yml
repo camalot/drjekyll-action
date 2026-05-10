@@ -1,0 +1,18 @@
+---
+name: "Dr. Jekyll Action"
+description: "A GitHub Action to build and deploy Jekyll documentation sites."
+author: "Ryan Conrad <ryan.conrad@imanage.com>"
+
+inputs:
+  output_dir:
+    description: "Directory where the built site will be output (default: _site)."
+    required: false
+    default: "_site"
+  input_dir:
+    description: "Directory containing the Jekyll source files (default: .)."
+    required: false
+    default: "."
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
