@@ -1,9 +1,10 @@
 ---
-title: Usage
+title: ℹ️ Usage
 nav_order: 2
+layout: default
 ---
 
-# Usage
+# ℹ️ Usage
 {: .no_toc }
 
 <details open markdown="block">

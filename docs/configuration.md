@@ -1,9 +1,9 @@
 ---
-title: Configuration
+title: ⚙️ Configuration
 nav_order: 3
 ---
 
-# Configuration
+# ⚙️ Configuration
 {: .no_toc }
 
 <details open markdown="block">
