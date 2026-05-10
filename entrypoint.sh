@@ -363,29 +363,47 @@ function build_docs() {
     cp "$DRJEKYLL_DOCS_DIR/_config.yaml" "$DRJEKYLL_DOCS_DIR/_config.yml"
   fi
 
-  # Check if the input files contain the necessary configuration for drjekyll. If not, we will add the necessary configuration to the drjekyll docs directory. This will allow the Jekyll build to succeed even if the user does not provide the necessary configuration.
+  # Jekyll builds into a writable temp dir inside the container first.
+  # We then copy the result to OUTPUT_DIR so that Jekyll never needs write access
+  # to the (possibly permission-restricted) host-mounted workspace during the build.
+  local BUILD_TMP_DIR
+  BUILD_TMP_DIR="$(mktemp -d /tmp/jekyll-build-XXXXXX)"
+  log_info "Jekyll will build into temporary directory: $BUILD_TMP_DIR"
 
-  # Update the destination in _config-drjekyll.yml to the actual output directory
-  log_info "Setting destination in _config-drjekyll.yml to '$OUTPUT_DIR' using yq..."
-  if ! yq eval ".destination = \"$OUTPUT_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+  # Update the destination in _config-drjekyll.yml to the temp build directory.
+  log_info "Setting destination in _config-drjekyll.yml to '$BUILD_TMP_DIR' using yq..."
+  if ! yq eval ".destination = \"$BUILD_TMP_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
     log_error "yq update failed with exit code $?"
     group_end
     exit 1
   fi
 
-  # Build the Jekyll site
-  log_info "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
+  # Build the Jekyll site into the temp directory.
+  log_info "Building Jekyll site from '$DRJEKYLL_DOCS_DIR' to '$BUILD_TMP_DIR'..."
+  log_info "Final output will be copied to: $OUTPUT_DIR"
   log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
   log_info "BUNDLE_GEMFILE: $BUNDLE_GEMFILE"
   log_info "BUNDLE_PATH: $BUNDLE_PATH"
   if ! JEKYLL_ENV=production bundle exec jekyll build \
     --source "$DRJEKYLL_DOCS_DIR" \
-    --destination "$OUTPUT_DIR" \
+    --destination "$BUILD_TMP_DIR" \
     --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
-    log_error "Jekyll build failed with exit code $?"
+    log_error "Jekyll build failed."
+    rm -rf "$BUILD_TMP_DIR"
     group_end
     exit 1
   fi
+
+  log_info "Jekyll build succeeded. Copying output from '$BUILD_TMP_DIR' to '$OUTPUT_DIR'..."
+  mkdir -p "$OUTPUT_DIR"
+  if ! rsync -a --delete "$BUILD_TMP_DIR/" "$OUTPUT_DIR/"; then
+    log_error "Failed to copy build output to '$OUTPUT_DIR'. Check that the directory is writable."
+    rm -rf "$BUILD_TMP_DIR"
+    group_end
+    exit 1
+  fi
+  rm -rf "$BUILD_TMP_DIR"
+  log_info "Output successfully written to '$OUTPUT_DIR'."
 
   log_output_summary
   group_end
