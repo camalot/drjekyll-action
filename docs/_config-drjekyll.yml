@@ -17,7 +17,7 @@ plugins:
   - rouge
 
 highlighter: rouge
-destination: ../_site
+destination: "{{ input.output_dir }}"
 
 # kramdown:
 #   input: GFM

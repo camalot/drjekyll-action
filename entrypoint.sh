@@ -3,9 +3,11 @@
 # This script is the entry point for the GitHub Action. It sets up the environment, builds the Jekyll site to the specified output directory, and handles any necessary configuration.
 
 # Set the input and output directories. The input directory is set on the action as an input as input_dir. The output directory is set on the action as an input as output_dir.
+# All paths are relative to GITHUB_WORKSPACE, which defaults to the current directory if not set.
 
-INPUT_DIR="${INPUT_INPUT_DIR:-.}"
-OUTPUT_DIR="${INPUT_OUTPUT_DIR:-_site}"
+GITHUB_WORKSPACE="${GITHUB_WORKSPACE:-.}"
+INPUT_DIR="${GITHUB_WORKSPACE}/${INPUT_INPUT_DIR:-.}"
+OUTPUT_DIR="${GITHUB_WORKSPACE}/${INPUT_OUTPUT_DIR:-_site}"
 DRJEKYLL_DOCS_DIR="/app/docs"
 
 
@@ -292,6 +294,10 @@ function build_docs() {
   fi
 
   # Check if the input files contain the necessary configuration for drjekyll. If not, we will add the necessary configuration to the drjekyll docs directory. This will allow the Jekyll build to succeed even if the user does not provide the necessary configuration.
+
+  # Update the destination in _config-drjekyll.yml to the actual output directory
+  log_info "Setting destination in _config-drjekyll.yml to '$OUTPUT_DIR' using yq..."
+  yq eval ".destination = \"$OUTPUT_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
 
   # Build the Jekyll site
   log_info "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
