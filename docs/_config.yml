@@ -1,7 +1,7 @@
 ---
 remote_theme: just-the-docs/just-the-docs
 
-title: Dr. Jekyll Action Documentation
+title: Dr. Jekyll
 description: Documentation for the Dr. Jekyll GitHub Action, which builds and deploys Jekyll sites to GitHub Pages.
 
 logo: /assets/images/icon.svg
@@ -9,6 +9,6 @@ logo: /assets/images/icon.svg
 # Aux links (top nav)
 aux_links:
   "GitHub":
-    - "https://github.com/iman-srecore/ansible-systems"
+    - "https://github.com/iman-srecore/drjekyll-action"
 
 aux_links_new_tab: true

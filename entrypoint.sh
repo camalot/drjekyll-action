@@ -336,6 +336,56 @@ function setup_drjekyll() {
   group_end
 }
 
+function get_config_title() {
+  # Returns the first non-empty 'title' value found across the config file chain.
+  # User configs take precedence over the DrJekyll base config.
+  local title=""
+  local config_files=(
+    "$DRJEKYLL_DOCS_DIR/_config.yml"
+    "$DRJEKYLL_DOCS_DIR/_config.yaml"
+    "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
+  )
+  for config_file in "${config_files[@]}"; do
+    if [ -f "$config_file" ]; then
+      title="$(yq eval '.title // ""' "$config_file")"
+      if [ -n "$title" ] && [ "$title" != "null" ]; then
+        echo "$title"
+        return
+      fi
+    fi
+  done
+  echo ""
+}
+
+function replace_template_vars() {
+  group_start "Replace template variables"
+  local title
+  title="$(get_config_title)"
+
+  if [ -z "$title" ] || [ "$title" = "null" ]; then
+    log_warn "No 'title' found in any config file; '{{ config.title }}' placeholders will remain unreplaced."
+    group_end
+    return
+  fi
+
+  log_info "Replacing '{{ config.title }}' with '$title' in template files..."
+
+  local template_files=(
+    "$DRJEKYLL_DOCS_DIR/assets/css/_components.scss"
+  )
+
+  for file in "${template_files[@]}"; do
+    if [ -f "$file" ]; then
+      log_info "Processing template file: $file"
+      sed -i "s|{{ config.title }}|$title|g" "$file"
+    else
+      log_warn "Template file not found, skipping: $file"
+    fi
+  done
+
+  group_end
+}
+
 function build_docs() {
   group_start "Build docs"
   # Check if the output directory exists, if it does, remove it
@@ -438,6 +488,7 @@ function main() {
   group_end
 
   setup_drjekyll
+  replace_template_vars
   build_docs
 
   log_info "Action completed successfully."
