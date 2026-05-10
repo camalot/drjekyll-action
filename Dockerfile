@@ -5,8 +5,8 @@ FROM ruby:3-slim-trixie
 
 ARG USERNAME=drjekyll
 
-# create non-root user and group to run the application
-RUN groupadd -r $USERNAME && useradd -r -g $USERNAME $USERNAME
+# create non-root user and group to run the application with a home directory
+RUN groupadd -r $USERNAME && useradd -r -g $USERNAME -d /home/$USERNAME -m $USERNAME
 
 # Native gems (e.g., bigdecimal) require a compiler toolchain on slim images.
 RUN apt-get update \

@@ -371,7 +371,7 @@ function build_docs() {
   # Build the Jekyll site
   log_info "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
   log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
-  if ! jekyll build \
+  if ! bundle exec jekyll build \
     --source "$DRJEKYLL_DOCS_DIR" \
     --destination "$OUTPUT_DIR" \
     --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
