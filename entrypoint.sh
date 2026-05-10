@@ -2,6 +2,13 @@
 
 # This script is the entry point for the GitHub Action. It sets up the environment, builds the Jekyll site to the specified output directory, and handles any necessary configuration.
 
+# Set the input and output directories. The input directory is set on the action as an input as input_dir. The output directory is set on the action as an input as output_dir.
+
+INPUT_DIR="${INPUT_INPUT_DIR:-.}"
+OUTPUT_DIR="${INPUT_OUTPUT_DIR:-_site}"
+DRJEKYLL_DOCS_DIR="/app/docs"
+
+
 function timestamp_utc() {
   date -u +"%Y-%m-%dT%H:%M:%SZ"
 }
@@ -108,11 +115,6 @@ function log_output_summary() {
   group_end
 }
 
-# Set the input and output directories. The input directory is set on the action as an input as input_dir. The output directory is set on the action as an input as output_dir.
-
-INPUT_DIR="${INPUT_INPUT_DIR:-.}"
-OUTPUT_DIR="${INPUT_OUTPUT_DIR:-_site}"
-DRJEKYLL_DOCS_DIR="/app/docs"
 
 function get_drjekyll_packages() {
   # get the list of packages that are required by drjekyll from the drjekyll Gemfile. We will use this list to check if the user's Gemfile includes these packages, and if not, we will add them to the user's Gemfile.
@@ -259,7 +261,8 @@ function setup_drjekyll() {
   # Install the necessary gems for the Jekyll build. We will use Bundler to install the gems specified in the user's Gemfile, which now includes the necessary packages for drjekyll.
   group_start "Bundle install"
   log_info "Installing gems for Jekyll build with Gemfile '$USER_GEMFILE'..."
-  bundle install --gemfile="$USER_GEMFILE" --path vendor/bundle
+  bundle config set --local path "$DRJEKYLL_DOCS_DIR/vendor/bundle"
+  bundle install --gemfile="$USER_GEMFILE" --path "$DRJEKYLL_DOCS_DIR/vendor/bundle"
   log_info "Bundle install complete."
   group_end
 
