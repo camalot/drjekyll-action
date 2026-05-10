@@ -38,6 +38,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - name: Setup Pages
+        id: pages
         uses: actions/configure-pages@v6
 
       - name: Dr. Jekyll Build
@@ -47,8 +48,8 @@ jobs:
         with:
           input_dir: ./docs
           output_dir: ./_site
-          url: ${{ steps.deployment.outputs.page_url }}
-          baseurl: "/"
+          url: ${{ steps.pages.outputs.base_url }}
+          baseurl: ""
       - name: Upload artifact
         if: "${{ !env.ACT }}"
         uses: actions/upload-pages-artifact@v5
