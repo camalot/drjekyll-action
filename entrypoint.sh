@@ -10,12 +10,15 @@ set -u  # Fail on undefined variables
 
 function resolve_workspace_path() {
   local raw_path="$1"
+  local resolved
   # Keep absolute paths untouched; resolve relative paths under GITHUB_WORKSPACE.
   if [[ "$raw_path" = /* ]]; then
-    echo "$raw_path"
+    resolved="$raw_path"
   else
-    echo "$GITHUB_WORKSPACE/$raw_path"
+    resolved="$GITHUB_WORKSPACE/$raw_path"
   fi
+  # Normalize away any ./ or ../ segments without requiring the path to exist.
+  realpath -m "$resolved"
 }
 
 GITHUB_WORKSPACE="${GITHUB_WORKSPACE:-.}"
@@ -316,13 +319,15 @@ function setup_drjekyll() {
   # Install the necessary gems for the Jekyll build. We will use Bundler to install the gems specified in the user's Gemfile, which now includes the necessary packages for drjekyll.
   group_start "Bundle install"
   log_info "Installing gems for Jekyll build with Gemfile '$USER_GEMFILE'..."
-  bundle config set --local path "$DRJEKYLL_DOCS_DIR/vendor/bundle"
-  if ! bundle install --gemfile="$USER_GEMFILE"; then
+  if ! BUNDLE_GEMFILE="$USER_GEMFILE" BUNDLE_PATH="$DRJEKYLL_DOCS_DIR/vendor/bundle" bundle install; then
     log_error "Bundle install failed with exit code $?"
     group_end
     exit 1
   fi
   log_info "Bundle install complete."
+  # Export so all subsequent bundle/jekyll calls use the same Gemfile and path.
+  export BUNDLE_GEMFILE="$USER_GEMFILE"
+  export BUNDLE_PATH="$DRJEKYLL_DOCS_DIR/vendor/bundle"
   group_end
 
   log_directory_snapshot "DrJekyll docs after setup" "$DRJEKYLL_DOCS_DIR" 150
@@ -371,7 +376,9 @@ function build_docs() {
   # Build the Jekyll site
   log_info "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
   log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
-  if ! bundle exec jekyll build \
+  log_info "BUNDLE_GEMFILE: $BUNDLE_GEMFILE"
+  log_info "BUNDLE_PATH: $BUNDLE_PATH"
+  if ! JEKYLL_ENV=production bundle exec jekyll build \
     --source "$DRJEKYLL_DOCS_DIR" \
     --destination "$OUTPUT_DIR" \
     --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
