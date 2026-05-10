@@ -2,6 +2,111 @@
 
 # This script is the entry point for the GitHub Action. It sets up the environment, builds the Jekyll site to the specified output directory, and handles any necessary configuration.
 
+function timestamp_utc() {
+  date -u +"%Y-%m-%dT%H:%M:%SZ"
+}
+
+function log_info() {
+  echo "[$(timestamp_utc)] [INFO] $*"
+}
+
+function log_warn() {
+  echo "[$(timestamp_utc)] [WARN] $*" >&2
+}
+
+function log_error() {
+  local msg="$*"
+  echo "[$(timestamp_utc)] [ERROR] $msg" >&2
+  echo "::error::$msg"
+}
+
+function group_start() {
+  echo "::group::$1"
+}
+
+function group_end() {
+  echo "::endgroup::"
+}
+
+function path_exists_msg() {
+  local path="$1"
+  if [ -e "$path" ]; then
+    echo "yes"
+  else
+    echo "no"
+  fi
+}
+
+function log_directory_snapshot() {
+  local title="$1"
+  local dir="$2"
+  local max_entries="${3:-200}"
+
+  group_start "$title"
+  if [ ! -d "$dir" ]; then
+    log_warn "Directory '$dir' does not exist; skipping snapshot."
+    group_end
+    return
+  fi
+
+  log_info "Snapshot directory: $dir"
+  log_info "Top-level listing:"
+  ls -la "$dir"
+
+  local total_entries
+  total_entries=$(find "$dir" -mindepth 1 | wc -l | tr -d ' ')
+  log_info "Total entries under '$dir': $total_entries"
+
+  log_info "First $max_entries entries (sorted):"
+  find "$dir" -mindepth 1 | sort | head -n "$max_entries"
+  if [ "$total_entries" -gt "$max_entries" ]; then
+    log_warn "Snapshot truncated at $max_entries entries."
+  fi
+  group_end
+}
+
+function log_environment_context() {
+  group_start "Runtime context"
+  log_info "PWD: $(pwd)"
+  log_info "INPUT_DIR: $INPUT_DIR"
+  log_info "OUTPUT_DIR: $OUTPUT_DIR"
+  log_info "DRJEKYLL_DOCS_DIR: $DRJEKYLL_DOCS_DIR"
+  log_info "GITHUB_ACTION: ${GITHUB_ACTION:-<unset>}"
+  log_info "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE:-<unset>}"
+  log_info "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY:-<unset>}"
+  log_info "GITHUB_REF: ${GITHUB_REF:-<unset>}"
+  log_info "Ruby version: $(ruby --version 2>/dev/null || echo unavailable)"
+  log_info "Bundler version: $(bundle --version 2>/dev/null || echo unavailable)"
+  group_end
+}
+
+function log_output_summary() {
+  group_start "Build output summary"
+  if [ ! -d "$OUTPUT_DIR" ]; then
+    log_error "Output directory '$OUTPUT_DIR' was not created."
+    group_end
+    return 1
+  fi
+
+  local file_count
+  local dir_count
+  file_count=$(find "$OUTPUT_DIR" -type f | wc -l | tr -d ' ')
+  dir_count=$(find "$OUTPUT_DIR" -type d | wc -l | tr -d ' ')
+
+  log_info "Output directory exists: $OUTPUT_DIR"
+  log_info "Output size: $(du -sh "$OUTPUT_DIR" | awk '{print $1}')"
+  log_info "Output file count: $file_count"
+  log_info "Output directory count: $dir_count"
+
+  if [ -f "$OUTPUT_DIR/index.html" ]; then
+    log_info "index.html found at '$OUTPUT_DIR/index.html'"
+  else
+    log_warn "index.html was not found in '$OUTPUT_DIR'"
+  fi
+
+  log_directory_snapshot "Output directory tree" "$OUTPUT_DIR" 300
+  group_end
+}
 
 # Set the input and output directories. The input directory is set on the action as an input as input_dir. The output directory is set on the action as an input as output_dir.
 
@@ -26,6 +131,8 @@ function get_drjekyll_packages() {
         packages+=("${BASH_REMATCH[1]}")
       fi
     done < "$DRJEKYLL_GEMFILE"
+  else
+    log_warn "DrJekyll Gemfile '$DRJEKYLL_GEMFILE' was not found."
   fi
   printf '%s\n' "${packages[@]}"
 }
@@ -84,38 +191,61 @@ function setup_user_header_footer() {
 }
 
 function setup_drjekyll() {
+  group_start "Setup DrJekyll"
+  log_info "Starting setup phase."
 
   # check if INPUT_DIR exists
   if [ ! -d "$INPUT_DIR" ]; then
-    echo "Input directory '$INPUT_DIR' does not exist." >&2
+    log_error "Input directory '$INPUT_DIR' does not exist."
+    group_end
     exit 1
   fi
 
   # check if DRJEKYLL_DOCS_DIR exists
   if [ ! -d "$DRJEKYLL_DOCS_DIR" ]; then
-    echo "Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR' does not exist." >&2
+    log_error "Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR' does not exist."
+    group_end
     exit 1
   fi
+
+  log_directory_snapshot "Input directory before merge" "$INPUT_DIR" 120
+  log_directory_snapshot "DrJekyll docs before merge" "$DRJEKYLL_DOCS_DIR" 120
 
   # Merge the input directory with the drjekyll docs directory. This will allow the Jekyll build to find the necessary configuration and assets. We will copy the contents of the input directory to the drjekyll docs directory, overwriting any existing files. This will allow the user to override any configuration or assets that are provided by drjekyll.
 
   # input_dir/_includes/footer_custom.html and input_dir/_includes/header_custom.html and copy them to the drjekyll docs directory as _includes/user_footer_custom.html and _includes/user_header_custom.html. They are then included in the drjekyll header and footer includes, allowing the user to customize the header and footer of their site without modifying the drjekyll includes.
 
-  echo "Merging input directory '$INPUT_DIR' with Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR'..."
+  log_info "Merging input directory '$INPUT_DIR' with Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR'..."
   # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/header_custom.html files, as they are handled separately
   rsync -av --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"
 
   setup_user_header_footer
 
+  log_info "Header/footer customization files:"
+  log_info "user_footer_custom.html present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_includes/user_footer_custom.html")"
+  log_info "user_header_custom.html present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_includes/user_header_custom.html")"
+
   # if user has their own Gemfile, we need to make sure that the packages that are required by drjekyll are included in the user's Gemfile. We will check if the user's Gemfile includes the necessary packages, and if not, we will add them to the user's Gemfile. This will allow the user to use their own Gemfile while still ensuring that the necessary packages for drjekyll are installed.
   local USER_GEMFILE="$INPUT_DIR/Gemfile"
   local TEMP_GEMFILE="$DRJEKYLL_DOCS_DIR/UserGemfile"
 
+  if [ ! -f "$USER_GEMFILE" ]; then
+    log_error "User Gemfile '$USER_GEMFILE' not found. Please include a Gemfile in your input directory."
+    group_end
+    exit 1
+  fi
+
   cp "$USER_GEMFILE" "$TEMP_GEMFILE"
   USER_GEMFILE="$TEMP_GEMFILE"
+  log_info "Using temporary Gemfile: $USER_GEMFILE"
 
   local drjekyll_packages=()
   mapfile -t drjekyll_packages < <(get_drjekyll_packages)
+  log_info "Resolved ${#drjekyll_packages[@]} DrJekyll package requirement(s)."
+  if [ "${#drjekyll_packages[@]}" -gt 0 ]; then
+    printf '%s\n' "${drjekyll_packages[@]}" | sed 's/^/[PKG] /'
+  fi
+
   for package in "${drjekyll_packages[@]}"; do
     local package_name="${package%%:*}"
     local package_version="${package#*:}"
@@ -127,43 +257,61 @@ function setup_drjekyll() {
   done
   # After ensuring that the user's Gemfile includes the necessary packages for drjekyll, we will install the gems using Bundler. We will specify the user's Gemfile as the Gemfile to use for the installation, and we will install the gems to a local directory called vendor/bundle. This will allow us to use the installed gems for the Jekyll build without affecting the global gem environment.
   # Install the necessary gems for the Jekyll build. We will use Bundler to install the gems specified in the user's Gemfile, which now includes the necessary packages for drjekyll.
-  echo "Installing gems for Jekyll build..."
+  group_start "Bundle install"
+  log_info "Installing gems for Jekyll build with Gemfile '$USER_GEMFILE'..."
   bundle install --gemfile="$USER_GEMFILE" --path vendor/bundle
+  log_info "Bundle install complete."
+  group_end
+
+  log_directory_snapshot "DrJekyll docs after setup" "$DRJEKYLL_DOCS_DIR" 150
+  group_end
 }
 
 function build_docs() {
+  group_start "Build docs"
   # Check if the output directory exists, if it does, remove it
   if [ -d "$OUTPUT_DIR" ]; then
-    echo "Output directory '$OUTPUT_DIR' already exists. Removing it." >&2
+    log_warn "Output directory '$OUTPUT_DIR' already exists. Removing it."
     rm -rf "$OUTPUT_DIR"
   fi
 
   # if the user files does not include a _config.yml file, we need to fail. DrJekyll does not define all the necessary configuration for Jekyll to build the site, so we need to ensure that the user provides a _config.yml file with the necessary configuration. If the user does not provide a _config.yml file, we will not be able to build the site, and we will fail with an error message.
-  if [ ! -f "$DRJEKYLL_DOCS_DIR/_config.{yml,yaml}" ]; then
-    echo "Input directory '$INPUT_DIR' does not contain a _config.{yml,yaml} file. Please provide a _config.{yml,yaml} file with the necessary configuration for Jekyll to build the site." >&2
+  if [ ! -f "$DRJEKYLL_DOCS_DIR/_config.yml" ] && [ ! -f "$DRJEKYLL_DOCS_DIR/_config.yaml" ]; then
+    log_error "Input directory '$INPUT_DIR' does not contain a _config.yml or _config.yaml file. Please provide one so Jekyll can build the site."
+    group_end
     exit 1
   fi
 
   # normalize the _config file name to _config.yml, as Jekyll will look for _config.yml by default. If the user provides a _config.yaml file, we will copy it to _config.yml in the drjekyll docs directory. This will allow Jekyll to find the configuration file and build the site successfully.
   if [ -f "$DRJEKYLL_DOCS_DIR/_config.yaml" ] && [ ! -f "$DRJEKYLL_DOCS_DIR/_config.yml" ]; then
-    echo "Copying '$DRJEKYLL_DOCS_DIR/_config.yaml' to '$DRJEKYLL_DOCS_DIR/_config.yml'..."
+    log_info "Copying '$DRJEKYLL_DOCS_DIR/_config.yaml' to '$DRJEKYLL_DOCS_DIR/_config.yml'..."
     cp "$DRJEKYLL_DOCS_DIR/_config.yaml" "$DRJEKYLL_DOCS_DIR/_config.yml"
   fi
 
   # Check if the input files contain the necessary configuration for drjekyll. If not, we will add the necessary configuration to the drjekyll docs directory. This will allow the Jekyll build to succeed even if the user does not provide the necessary configuration.
 
   # Build the Jekyll site
-  echo "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
+  log_info "Building Jekyll site from '$INPUT_DIR' to '$OUTPUT_DIR'..."
+  log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
   jekyll build \
     --source "$INPUT_DIR" \
     --destination "$OUTPUT_DIR" \
     --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
+
+  log_output_summary
+  group_end
 }
 
 
 function main() {
+  group_start "DrJekyll action startup"
+  log_environment_context
+  group_end
+
   setup_drjekyll
   build_docs
+
+  log_info "Action completed successfully."
 }
 
 main "$@"
