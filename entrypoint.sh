@@ -405,6 +405,12 @@ function build_docs() {
   rm -rf "$BUILD_TMP_DIR"
   log_info "Output successfully written to '$OUTPUT_DIR'."
 
+  # Ensure the output directory and its contents are readable by the runner user.
+  # The container runs as root, so files may be created with restrictive permissions
+  # that prevent subsequent steps (e.g. upload-pages-artifact) from accessing them.
+  log_info "Setting read permissions on '$OUTPUT_DIR' for all users..."
+  chmod -R a+rX "$OUTPUT_DIR"
+
   log_output_summary
   group_end
 }
