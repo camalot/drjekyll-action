@@ -8,6 +8,11 @@ ARG USERNAME=drjekyll
 # create non-root user and group to run the application
 RUN groupadd -r $USERNAME && useradd -r -g $USERNAME $USERNAME
 
+# Native gems (e.g., bigdecimal) require a compiler toolchain on slim images.
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends build-essential \
+	&& rm -rf /var/lib/apt/lists/*
+
 # Install Jekyll and Bundler
 RUN gem install bundler
 

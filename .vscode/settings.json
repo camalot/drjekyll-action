@@ -2,5 +2,34 @@
   "cSpell.words": [
     "DRJEKYLL",
     "htmlhint"
-  ]
+  ],
+  "workspaceTasks.enabledTaskTypes": {
+    "ant": false,
+    "ruby": true,
+    "bitbucket": false,
+    "cake": false,
+    "cmake": false,
+    "composer": false,
+    "cargo": false,
+    "cargo-make": false,
+    "deno": false,
+    "eslint": false,
+    "gitlab-ci": false,
+    "go": false,
+    "gradle": false,
+    "grunt": false,
+    "gulp": false,
+    "jupyter": false,
+    "just": false,
+    "make": false,
+    "maven": false,
+    "msbuild": false,
+    "mise": false,
+    "npm": false,
+    "pipenv": false,
+    "poe": false,
+    "poetry": false,
+    "typescript": false,
+    "webpack": false
+  }
 }
