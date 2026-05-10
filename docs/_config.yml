@@ -3,6 +3,7 @@ remote_theme: just-the-docs/just-the-docs
 
 title: Dr. Jekyll
 description: Documentation for the Dr. Jekyll GitHub Action, which builds and deploys Jekyll sites to GitHub Pages.
+copyright: "&copy; 2026 iManage LLC. All rights reserved."
 
 logo: /assets/images/icon.svg
 
