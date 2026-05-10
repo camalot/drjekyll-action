@@ -24,6 +24,8 @@ function resolve_workspace_path() {
 GITHUB_WORKSPACE="${GITHUB_WORKSPACE:-.}"
 INPUT_DIR="$(resolve_workspace_path "${INPUT_INPUT_DIR:-.}")"
 OUTPUT_DIR="$(resolve_workspace_path "${INPUT_OUTPUT_DIR:-_site}")"
+INPUT_URL="${INPUT_URL:-}"
+INPUT_BASEURL="${INPUT_BASEURL:-}"
 DRJEKYLL_DOCS_DIR="/app/docs"
 
 
@@ -370,10 +372,24 @@ function build_docs() {
   BUILD_TMP_DIR="$(mktemp -d /tmp/jekyll-build-XXXXXX)"
   log_info "Jekyll will build into temporary directory: $BUILD_TMP_DIR"
 
-  # Update the destination in _config-drjekyll.yml to the temp build directory.
+  # Update destination, url, and baseurl in _config-drjekyll.yml with runtime values.
   log_info "Setting destination in _config-drjekyll.yml to '$BUILD_TMP_DIR' using yq..."
   if ! yq eval ".destination = \"$BUILD_TMP_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
-    log_error "yq update failed with exit code $?"
+    log_error "yq update of destination failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  log_info "Setting url in _config-drjekyll.yml to '$INPUT_URL' using yq..."
+  if ! yq eval ".url = \"$INPUT_URL\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    log_error "yq update of url failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  log_info "Setting baseurl in _config-drjekyll.yml to '$INPUT_BASEURL' using yq..."
+  if ! yq eval ".baseurl = \"$INPUT_BASEURL\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    log_error "yq update of baseurl failed with exit code $?"
     group_end
     exit 1
   fi

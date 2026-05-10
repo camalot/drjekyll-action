@@ -12,6 +12,14 @@ inputs:
     description: "Directory containing the Jekyll source files (default: .)."
     required: false
     default: "."
+  url:
+    description: "URL for the Jekyll site (e.g. https://example.com)."
+    required: false
+    default: ""
+  baseurl:
+    description: "Base URL for the Jekyll site."
+    required: false
+    default: "/"
 
 runs:
   using: "docker"

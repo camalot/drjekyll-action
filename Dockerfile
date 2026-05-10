@@ -17,7 +17,7 @@ RUN gem install bundler
 # copy the jekyll base files to the container
 WORKDIR /app
 
-COPY docs/. /app/docs/
+COPY drjekyll/. /app/docs/
 COPY entrypoint.sh /entrypoint.sh
 
 # Install dependencies

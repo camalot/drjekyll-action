@@ -47,6 +47,8 @@ jobs:
         with:
           input_dir: ./docs
           output_dir: ./_site
+          url: ${{ steps.deployment.outputs.page_url }}
+          baseurl: "/"
       - name: Upload artifact
         if: "${{ !env.ACT }}"
         uses: actions/upload-pages-artifact@v5

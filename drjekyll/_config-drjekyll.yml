@@ -3,8 +3,8 @@ remote_theme: just-the-docs/just-the-docs
 
 # title: "{{ site.title }}"
 # description: "{{ site.description }}"
-# url: "{{ site.url }}"
-baseurl: "{{ site.baseurl }}"
+url: "{{ input.url }}"
+baseurl: "{{ input.baseurl }}"
 logo: /assets/images/logo.png
 favicon: /assets/images/favicon.ico
 
