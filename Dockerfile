@@ -3,11 +3,6 @@
 
 FROM ruby:3-slim-trixie
 
-ARG USERNAME=drjekyll
-
-# create non-root user and group to run the application with a home directory
-RUN groupadd -r $USERNAME && useradd -r -g $USERNAME -d /home/$USERNAME -m $USERNAME
-
 # Native gems (e.g., bigdecimal) require a compiler toolchain on slim images.
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends curl jq build-essential rsync \
@@ -22,15 +17,12 @@ RUN gem install bundler
 # copy the jekyll base files to the container
 WORKDIR /app
 
-COPY --chown=$USERNAME:$USERNAME docs/. /app/docs/
-COPY --chown=$USERNAME:$USERNAME entrypoint.sh /entrypoint.sh
+COPY docs/. /app/docs/
+COPY entrypoint.sh /entrypoint.sh
 
 # Install dependencies
 RUN bundle config set path /app/docs/vendor/bundle && bundle install --gemfile=/app/docs/Gemfile
 
-# Change ownership of the app directory to the non-root user
-RUN chown -R $USERNAME:$USERNAME /app && chmod +x /entrypoint.sh
-
-USER $USERNAME
+RUN chmod +x /entrypoint.sh
 
 CMD [ "/entrypoint.sh" ]
