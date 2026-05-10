@@ -234,9 +234,10 @@ function setup_drjekyll() {
   local TEMP_GEMFILE="$DRJEKYLL_DOCS_DIR/UserGemfile"
 
   if [ ! -f "$USER_GEMFILE" ]; then
-    log_error "User Gemfile '$USER_GEMFILE' not found. Please include a Gemfile in your input directory."
+    cp "$DRJEKYLL_DOCS_DIR/Gemfile" "$TEMP_GEMFILE"
+    USER_GEMFILE="$TEMP_GEMFILE"
+    log_info "No user Gemfile found. Using Dr. Jekyll Gemfile: $USER_GEMFILE"
     group_end
-    exit 1
   fi
 
   cp "$USER_GEMFILE" "$TEMP_GEMFILE"
