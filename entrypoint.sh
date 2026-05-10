@@ -265,7 +265,7 @@ function setup_drjekyll() {
   group_start "Bundle install"
   log_info "Installing gems for Jekyll build with Gemfile '$USER_GEMFILE'..."
   bundle config set --local path "$DRJEKYLL_DOCS_DIR/vendor/bundle"
-  bundle install --gemfile="$USER_GEMFILE" --path "$DRJEKYLL_DOCS_DIR/vendor/bundle"
+  bundle install --gemfile="$USER_GEMFILE"
   log_info "Bundle install complete."
   group_end
 
