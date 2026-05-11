@@ -12,7 +12,7 @@ Jupyter Notebooks can be included in your Dr. Jekyll docs in two ways: as a file
 ## FILE
 
 ``` liquid
-{% raw %}{% ipynb_file /path/to/notebook.ipynb %}{% rawend %}
+{% raw %}{% ipynb_file /path/to/notebook.ipynb %}{% endraw %}
 ```
 
 {% ipynb_file /assets/notebooks/test.ipynb %}
@@ -20,7 +20,7 @@ Jupyter Notebooks can be included in your Dr. Jekyll docs in two ways: as a file
 ## INLINE
 
 ``` liquid
-{% raw %}{% ipynb %}{% rawend %}
+{% raw %}{% ipynb %}{% endraw %}
 {
   "cells": [
     {
@@ -52,7 +52,7 @@ Jupyter Notebooks can be included in your Dr. Jekyll docs in two ways: as a file
   "nbformat": 4,
   "nbformat_minor": 5
 }
-{% raw %}{% endipynb %}{% rawend %}
+{% raw %}{% endipynb %}{% endraw %}
 ```
 
 {% ipynb %}
