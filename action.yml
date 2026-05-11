@@ -1,7 +1,7 @@
 ---
 name: "Dr. Jekyll Action"
 description: "A GitHub Action to build and deploy Jekyll documentation sites."
-author: "Ryan Conrad <ryan.conrad@imanage.com>"
+author: "Ryan Conrad <camalot@gmail.com>"
 
 inputs:
   output_dir:
