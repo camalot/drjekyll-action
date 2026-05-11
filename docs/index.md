@@ -28,9 +28,11 @@ You provide a directory of Markdown files and a `_config.yml`. Dr. Jekyll handle
 
 **1.** Enable GitHub Pages in your repository settings (source: GitHub Actions).
 
+`Repository settings > Pages > Source > GitHub Actions`
+
 **2.** Add a `docs/` directory with an `index.md` and a `_config.yml`:
 
-```
+``` tree
 docs/
   _config.yml
   index.md

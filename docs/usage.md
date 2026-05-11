@@ -138,14 +138,14 @@ A full history checkout (`fetch-depth: 0`) is recommended so that Jekyll can rea
   with:
     input_dir: ./docs
     output_dir: ./_site
-    url: ${{ steps.pages.outputs.base_url }}
+    url: "{% raw %}${{ steps.pages.outputs.base_url }}{% endraw %}"
     baseurl: ""
 ```
 
 This is the core step. See [Inputs](#inputs) below for full details.
 
 {: .important }
-> Always set `url` to `${{ steps.pages.outputs.base_url }}`. This ensures Jekyll generates correct absolute URLs for stylesheets, scripts, and links. Leaving it empty will cause assets to fail to load on the deployed site.
+> Always set `url` to `{% raw %}${{ steps.pages.outputs.base_url }}{% endraw %}`. This ensures Jekyll generates correct absolute URLs for stylesheets, scripts, and links. Leaving it empty will cause assets to fail to load on the deployed site.
 
 ### Upload & Deploy
 
@@ -164,7 +164,7 @@ Packages the `output_dir` as a Pages artifact. The `deploy` job then picks it up
 | --- | --- | --- | --- |
 | `input_dir` | Path to your Jekyll source directory, relative to the repository root. | No | `.` |
 | `output_dir` | Path where the built site is written, relative to the repository root. | No | `_site` |
-| `url` | Full URL of the deployed site (e.g. `https://my-org.github.io`). Use `${{ steps.pages.outputs.base_url }}`. | No | `` |
+| `url` | Full URL of the deployed site (e.g. `https://my-org.github.io`). Use `{% raw %}${{ steps.pages.outputs.base_url }}{% endraw %}`. | No | `` |
 | `baseurl` | Base path appended to the URL (e.g. `/my-repo`). Leave empty `""` when deploying to a custom domain or organisation/user Pages site. | No | `/` |
 
 ---
@@ -209,16 +209,55 @@ The following callout types are available:
 ```markdown
 {: .note }
 This is a note.
+```
+
+{: .note }
+This is a note.
+
+```markdown
+{: .new }
+This is a new.
+```
+
+{: .new }
+This is a new.
+
+```markdown
+{: .highlight }
+This is a highlight.
+```
+
+{: .highlight }
+This is a highlight.
+
+```markdown
+{: .tip }
+This is a tip.
+```
 
 {: .tip }
 This is a tip.
 
+```markdown
 {: .warning }
 This is a warning.
+```
+
+{: .warning }
+This is a warning.
+
+```markdown
+{: .caution }
+This is a caution.
+```
 
 {: .caution }
 This is a caution.
 
+```markdown
 {: .important }
 This is important.
 ```
+
+{: .important }
+This is important.
