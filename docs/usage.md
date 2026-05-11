@@ -85,8 +85,8 @@ jobs:
         with:
           input_dir: ./docs
           output_dir: ./_site
-          url: ${{ steps.pages.outputs.base_url }}
-          baseurl: ""
+          url: "{% raw %}${{ ${{ steps.pages.outputs.origin }} }}{% endraw %}"
+          baseurl: "{% raw %}${{ ${{ steps.pages.outputs.base_path }} }}{% endraw %}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
@@ -97,7 +97,7 @@ jobs:
       id-token: write   # to authenticate with GitHub Pages
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: {% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}
     runs-on: ubuntu-latest
     needs: build
     steps:
