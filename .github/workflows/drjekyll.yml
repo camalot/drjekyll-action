@@ -49,7 +49,7 @@ jobs:
           input_dir: ./docs
           output_dir: ./_site
           url: ${{ steps.pages.outputs.base_url }}
-          baseurl: ""
+          baseurl: "${{ steps.pages.outputs.base_path }}"
       - name: Upload artifact
         if: "${{ !env.ACT }}"
         uses: actions/upload-pages-artifact@v5
