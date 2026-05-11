@@ -1,0 +1,12 @@
+---
+
+host: "localhost"
+port: 4000
+url: "http://localhost:4000/"
+baseurl: ""
+
+detach: false
+# no need to watch. it starts within .drjekyll-local/ which is seeded on each run with the full docs source, so no changes will be detected during serve.
+livereload: false
+force_polling: false
+watch: false

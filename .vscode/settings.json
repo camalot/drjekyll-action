@@ -31,5 +31,7 @@
     "poetry": false,
     "typescript": false,
     "webpack": false
-  }
+  },
+  "workspaceTasks.groups.taskSeparatorIsRegex": true,
+  "workspaceTasks.groups.taskSeparator": ":|/"
 }

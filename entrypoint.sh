@@ -26,7 +26,15 @@ INPUT_DIR="$(resolve_workspace_path "${INPUT_INPUT_DIR:-.}")"
 OUTPUT_DIR="$(resolve_workspace_path "${INPUT_OUTPUT_DIR:-_site}")"
 INPUT_URL="${INPUT_URL:-}"
 INPUT_BASEURL="${INPUT_BASEURL:-}"
-DRJEKYLL_DOCS_DIR="/app/docs"
+# DRJEKYLL_DOCS_DIR: override to point at a local drjekyll/ directory when running outside the action container.
+# Defaults to /app/docs (the path baked into the Docker image).
+DRJEKYLL_DOCS_DIR="${DRJEKYLL_DOCS_DIR:-/app/docs}"
+# DRJEKYLL_SERVE: set to 'true' to run 'jekyll serve' instead of building and copying output.
+# Useful for local development. Serves on 0.0.0.0 so the host can reach it.
+DRJEKYLL_SERVE="${DRJEKYLL_SERVE:-false}"
+# DRJEKYLL_WORK_DIR: staging directory used only in serve mode. DRJEKYLL_DOCS_DIR and INPUT_DIR
+# are merged here so neither source directory is modified. Should be git-ignored.
+DRJEKYLL_WORK_DIR="$(resolve_workspace_path "${DRJEKYLL_WORK_DIR:-.drjekyll-local}")"
 
 
 function timestamp_utc() {
@@ -98,6 +106,8 @@ function log_environment_context() {
   log_info "INPUT_DIR: $INPUT_DIR"
   log_info "OUTPUT_DIR: $OUTPUT_DIR"
   log_info "DRJEKYLL_DOCS_DIR: $DRJEKYLL_DOCS_DIR"
+  log_info "DRJEKYLL_SERVE: $DRJEKYLL_SERVE"
+  log_info "DRJEKYLL_WORK_DIR: $DRJEKYLL_WORK_DIR"
   log_info "GITHUB_ACTION: ${GITHUB_ACTION:-<unset>}"
   log_info "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE:-<unset>}"
   log_info "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY:-<unset>}"
@@ -195,6 +205,51 @@ function add_package_to_gemfile() {
   fi
 }
 
+function setup_gems() {
+  local target_dir="$1"
+  local TEMP_GEMFILE="$target_dir/UserGemfile"
+  local USER_GEMFILE="$INPUT_DIR/Gemfile"
+
+  if [ ! -f "$USER_GEMFILE" ]; then
+    cp "$target_dir/Gemfile" "$TEMP_GEMFILE"
+    USER_GEMFILE="$TEMP_GEMFILE"
+    log_info "No user Gemfile found. Using DrJekyll Gemfile: $USER_GEMFILE"
+  fi
+
+  cp "$USER_GEMFILE" "$TEMP_GEMFILE"
+  USER_GEMFILE="$TEMP_GEMFILE"
+  log_info "Using temporary Gemfile: $USER_GEMFILE"
+
+  local drjekyll_packages=()
+  mapfile -t drjekyll_packages < <(get_drjekyll_packages)
+  log_info "Resolved ${#drjekyll_packages[@]} DrJekyll package requirement(s)."
+  if [ "${#drjekyll_packages[@]}" -gt 0 ]; then
+    printf '%s\n' "${drjekyll_packages[@]}" | sed 's/^/[PKG] /'
+  fi
+
+  for package in "${drjekyll_packages[@]}"; do
+    local package_name="${package%%:*}"
+    local package_version="${package#*:}"
+    if ! gemfile_contains "$USER_GEMFILE" "$package_name"; then
+      add_package_to_gemfile "$USER_GEMFILE" "$package_name" "$package_version"
+    else
+      echo "Package '$package_name' is already included in the user's Gemfile. Skipping."
+    fi
+  done
+
+  group_start "Bundle install"
+  log_info "Installing gems with Gemfile '$USER_GEMFILE' into '$target_dir/vendor/bundle'..."
+  if ! BUNDLE_GEMFILE="$USER_GEMFILE" BUNDLE_PATH="$target_dir/vendor/bundle" bundle install; then
+    log_error "Bundle install failed with exit code $?"
+    group_end
+    exit 1
+  fi
+  log_info "Bundle install complete."
+  export BUNDLE_GEMFILE="$USER_GEMFILE"
+  export BUNDLE_PATH="$target_dir/vendor/bundle"
+  group_end
+}
+
 function setup_user_header_footer() {
   # copy the input_dir/_includes/footer_custom.html and input_dir/_includes/header_custom.html to the drjekyll docs directory as _includes/user_footer_custom.html and _includes/user_header_custom.html
   if [ -f "$INPUT_DIR/_includes/footer_custom.html" ]; then
@@ -287,50 +342,8 @@ function setup_drjekyll() {
   log_info "user_footer_custom.html present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_includes/user_footer_custom.html")"
   log_info "user_header_custom.html present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_includes/user_header_custom.html")"
 
-  # if user has their own Gemfile, we need to make sure that the packages that are required by drjekyll are included in the user's Gemfile. We will check if the user's Gemfile includes the necessary packages, and if not, we will add them to the user's Gemfile. This will allow the user to use their own Gemfile while still ensuring that the necessary packages for drjekyll are installed.
-  local USER_GEMFILE="$INPUT_DIR/Gemfile"
-  local TEMP_GEMFILE="$DRJEKYLL_DOCS_DIR/UserGemfile"
-
-  if [ ! -f "$USER_GEMFILE" ]; then
-    cp "$DRJEKYLL_DOCS_DIR/Gemfile" "$TEMP_GEMFILE"
-    USER_GEMFILE="$TEMP_GEMFILE"
-    log_info "No user Gemfile found. Using Dr. Jekyll Gemfile: $USER_GEMFILE"
-  fi
-
-  cp "$USER_GEMFILE" "$TEMP_GEMFILE"
-  USER_GEMFILE="$TEMP_GEMFILE"
-  log_info "Using temporary Gemfile: $USER_GEMFILE"
-
-  local drjekyll_packages=()
-  mapfile -t drjekyll_packages < <(get_drjekyll_packages)
-  log_info "Resolved ${#drjekyll_packages[@]} DrJekyll package requirement(s)."
-  if [ "${#drjekyll_packages[@]}" -gt 0 ]; then
-    printf '%s\n' "${drjekyll_packages[@]}" | sed 's/^/[PKG] /'
-  fi
-
-  for package in "${drjekyll_packages[@]}"; do
-    local package_name="${package%%:*}"
-    local package_version="${package#*:}"
-    if ! gemfile_contains "$USER_GEMFILE" "$package_name"; then
-      add_package_to_gemfile "$USER_GEMFILE" "$package_name" "$package_version"
-    else
-      echo "Package '$package_name' is already included in the user's Gemfile. Skipping."
-    fi
-  done
-  # After ensuring that the user's Gemfile includes the necessary packages for drjekyll, we will install the gems using Bundler. We will specify the user's Gemfile as the Gemfile to use for the installation, and we will install the gems to a local directory called vendor/bundle. This will allow us to use the installed gems for the Jekyll build without affecting the global gem environment.
-  # Install the necessary gems for the Jekyll build. We will use Bundler to install the gems specified in the user's Gemfile, which now includes the necessary packages for drjekyll.
-  group_start "Bundle install"
-  log_info "Installing gems for Jekyll build with Gemfile '$USER_GEMFILE'..."
-  if ! BUNDLE_GEMFILE="$USER_GEMFILE" BUNDLE_PATH="$DRJEKYLL_DOCS_DIR/vendor/bundle" bundle install; then
-    log_error "Bundle install failed with exit code $?"
-    group_end
-    exit 1
-  fi
-  log_info "Bundle install complete."
-  # Export so all subsequent bundle/jekyll calls use the same Gemfile and path.
-  export BUNDLE_GEMFILE="$USER_GEMFILE"
-  export BUNDLE_PATH="$DRJEKYLL_DOCS_DIR/vendor/bundle"
-  group_end
+  # if user has their own Gemfile, we need to make sure that the packages that are required by drjekyll are included in the user's Gemfile.
+  setup_gems "$DRJEKYLL_DOCS_DIR"
 
   log_directory_snapshot "DrJekyll docs after setup" "$DRJEKYLL_DOCS_DIR" 150
   group_end
@@ -339,11 +352,12 @@ function setup_drjekyll() {
 function get_config_title() {
   # Returns the first non-empty 'title' value found across the config file chain.
   # User configs take precedence over the DrJekyll base config.
+  local active_dir="$1"
   local title=""
   local config_files=(
-    "$DRJEKYLL_DOCS_DIR/_config.yml"
-    "$DRJEKYLL_DOCS_DIR/_config.yaml"
-    "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
+    "$active_dir/_config.yml"
+    "$active_dir/_config.yaml"
+    "$active_dir/_config-drjekyll.yml"
   )
   for config_file in "${config_files[@]}"; do
     if [ -f "$config_file" ]; then
@@ -358,9 +372,10 @@ function get_config_title() {
 }
 
 function replace_template_vars() {
+  local active_dir="$1"
   group_start "Replace template variables"
   local title
-  title="$(get_config_title)"
+  title="$(get_config_title "$active_dir")"
 
   if [ -z "$title" ] || [ "$title" = "null" ]; then
     log_warn "No 'title' found in any config file; '{{ config.title }}' placeholders will remain unreplaced."
@@ -371,7 +386,7 @@ function replace_template_vars() {
   log_info "Replacing '{{ config.title }}' with '$title' in template files..."
 
   local template_files=(
-    "$DRJEKYLL_DOCS_DIR/assets/css/_components.scss"
+    "$active_dir/assets/css/_components.scss"
   )
 
   for file in "${template_files[@]}"; do
@@ -482,16 +497,138 @@ function build_docs() {
 }
 
 
+function setup_work_dir() {
+  group_start "Setup local work directory"
+  log_info "Creating/refreshing work directory '$DRJEKYLL_WORK_DIR'..."
+  rm -rf "$DRJEKYLL_WORK_DIR"
+  mkdir -p "$DRJEKYLL_WORK_DIR"
+
+  # Layer 1: seed with drjekyll theme/framework files (exclude vendor to avoid copying large gem trees).
+  log_info "Seeding work dir from DrJekyll docs '$DRJEKYLL_DOCS_DIR'..."
+  if ! rsync -a --exclude='vendor/' "$DRJEKYLL_DOCS_DIR/" "$DRJEKYLL_WORK_DIR/"; then
+    log_error "rsync of DrJekyll docs into work dir failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  # Layer 2: overlay user input files (same exclusions as the action merge).
+  log_info "Overlaying input directory '$INPUT_DIR' onto work dir..."
+  if ! rsync -av \
+      --exclude='Gemfile' \
+      --exclude='Gemfile.lock' \
+      --exclude='_config-drjekyll.yml' \
+      --exclude='_includes/footer_custom.html' \
+      --exclude='_includes/header_custom.html' \
+      "$INPUT_DIR/" "$DRJEKYLL_WORK_DIR/"; then
+    log_error "rsync of input dir into work dir failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  # Ensure user config lands in the work dir.
+  if [ -f "$INPUT_DIR/_config.yml" ]; then
+    cp "$INPUT_DIR/_config.yml" "$DRJEKYLL_WORK_DIR/_config.yml"
+  elif [ -f "$INPUT_DIR/_config.yaml" ]; then
+    cp "$INPUT_DIR/_config.yaml" "$DRJEKYLL_WORK_DIR/_config.yaml"
+  fi
+
+  # Normalize to _config.yml.
+  if [ -f "$DRJEKYLL_WORK_DIR/_config.yaml" ] && [ ! -f "$DRJEKYLL_WORK_DIR/_config.yml" ]; then
+    cp "$DRJEKYLL_WORK_DIR/_config.yaml" "$DRJEKYLL_WORK_DIR/_config.yml"
+  fi
+
+  # Handle user header/footer customizations.
+  if [ -f "$INPUT_DIR/_includes/footer_custom.html" ]; then
+    cp "$INPUT_DIR/_includes/footer_custom.html" "$DRJEKYLL_WORK_DIR/_includes/user_footer_custom.html"
+  else
+    touch "$DRJEKYLL_WORK_DIR/_includes/user_footer_custom.html"
+  fi
+  if [ -f "$INPUT_DIR/_includes/header_custom.html" ]; then
+    cp "$INPUT_DIR/_includes/header_custom.html" "$DRJEKYLL_WORK_DIR/_includes/user_header_custom.html"
+  else
+    touch "$DRJEKYLL_WORK_DIR/_includes/user_header_custom.html"
+  fi
+
+  log_directory_snapshot "Work directory after merge" "$DRJEKYLL_WORK_DIR" 150
+
+  setup_gems "$DRJEKYLL_WORK_DIR"
+  group_end
+}
+
+function serve_docs() {
+  group_start "Serve docs"
+
+  if [ ! -f "$INPUT_DIR/_config.yml" ] && [ ! -f "$INPUT_DIR/_config.yaml" ]; then
+    log_error "Input directory '$INPUT_DIR' does not contain _config.yml or _config.yaml."
+    group_end
+    exit 1
+  fi
+
+  if [ ! -f "$DRJEKYLL_WORK_DIR/_config.yml" ] && [ ! -f "$DRJEKYLL_WORK_DIR/_config.yaml" ]; then
+    log_error "Work directory '$DRJEKYLL_WORK_DIR' does not contain _config.yml or _config.yaml."
+    group_end
+    exit 1
+  fi
+
+  local SERVE_DEST="$DRJEKYLL_WORK_DIR/_site"
+
+  log_info "Setting destination in work dir _config-drjekyll.yml to '$SERVE_DEST' using yq..."
+  if ! yq eval ".destination = \"$SERVE_DEST\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
+    log_error "yq update of destination failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  log_info "Setting url in work dir _config-drjekyll.yml to '$INPUT_URL' using yq..."
+  if ! yq eval ".url = \"$INPUT_URL\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
+    log_error "yq update of url failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  log_info "Setting baseurl in work dir _config-drjekyll.yml to '$INPUT_BASEURL' using yq..."
+  if ! yq eval ".baseurl = \"$INPUT_BASEURL\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
+    log_error "yq update of baseurl failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  # Build the config chain: user config, drjekyll base config, then local overrides if present.
+  local SERVE_CONFIG="$DRJEKYLL_WORK_DIR/_config.yml,$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"
+  if [ -f "$DRJEKYLL_WORK_DIR/_config-drjekyll-local.yml" ]; then
+    SERVE_CONFIG="$SERVE_CONFIG,$DRJEKYLL_WORK_DIR/_config-drjekyll-local.yml"
+    log_info "Local config override found: $DRJEKYLL_WORK_DIR/_config-drjekyll-local.yml"
+  fi
+
+  log_info "Serving Jekyll site from work dir '$DRJEKYLL_WORK_DIR'..."
+  log_info "Config chain: $SERVE_CONFIG"
+  log_info "BUNDLE_GEMFILE: $BUNDLE_GEMFILE"
+  log_info "BUNDLE_PATH: $BUNDLE_PATH"
+
+  bundle exec jekyll serve \
+    --source "$DRJEKYLL_WORK_DIR" \
+    --destination "$SERVE_DEST" \
+    --config "$SERVE_CONFIG" \
+
+  group_end
+}
+
 function main() {
   group_start "DrJekyll action startup"
   log_environment_context
   group_end
 
-  setup_drjekyll
-  replace_template_vars
-  build_docs
-
-  log_info "Action completed successfully."
+  if [ "$DRJEKYLL_SERVE" = "true" ]; then
+    setup_work_dir
+    replace_template_vars "$DRJEKYLL_WORK_DIR"
+    serve_docs
+    log_info "Jekyll serve exited."
+  else
+    setup_drjekyll
+    replace_template_vars "$DRJEKYLL_DOCS_DIR"
+    build_docs
+    log_info "Action completed successfully."
+  fi
 }
 
 main "$@"

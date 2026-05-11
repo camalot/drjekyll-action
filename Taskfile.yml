@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+---
+
+version: '3'
+
+vars: {}
+
+tasks:
+  docs:serve:
+    desc: serve the documentation
+    env:
+      DRJEKYLL_DOCS_DIR: /workspace/drjekyll
+      DRJEKYLL_SERVE: true
+      INPUT_INPUT_DIR: docs
+    cmds:
+      - bash ./entrypoint.sh
+    silent: true
