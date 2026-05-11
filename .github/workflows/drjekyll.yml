@@ -3,10 +3,13 @@ name: Deploy Documentation
 
 on: # yamllint disable-line rule:truthy
   # Runs on pushes targeting the default branch
-  # push:
-  #   branches:
-  #     - "develop"
-  #     - "v*"
+  push:
+    branches:
+      - "develop"
+    paths:
+      - "docs/**"
+      - "drjekyll/**"
+      - ".github/workflows/drjekyll.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
