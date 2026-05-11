@@ -148,9 +148,17 @@ A full history checkout (`fetch-depth: 0`) is recommended so that Jekyll can rea
 This is the core step. See [Inputs](#inputs) below for full details.
 
 {: .important }
-> Always set `url` to `{% raw %}${{ ${{ steps.pages.outputs.origin }} }}{% endraw %}` when deploying to GitHub Pages. Use `{% raw %}${{ ${{ steps.pages.outputs.base_path }} }}{% endraw %}` for the `baseurl` when deploying to enterprise or custom domains. This ensures Jekyll generates correct absolute URLs for stylesheets, scripts, and links. Leaving it empty will cause assets to fail to load on the deployed site.
+> Enterprise GitHub or Custom Domains:
 >
-> If you are deploying to a custom domain or organization Pages site, set `baseurl: ""` to avoid double slashes in URLs. If deploying to a user Pages site, set `baseurl` to the repository name with `{% raw %}${{ ${{ steps.pages.outputs.base_path }} }}{% endraw %}`.
+> - Set `url` to `{% raw %}${{ steps.pages.outputs.base_url }}{% endraw %}`.
+> - Set `baseurl` to `""` (empty string).
+>
+> Commercial GitHub Pages:
+>
+> - Set `url` to `{% raw %}${{ steps.pages.outputs.origin }}{% endraw %}`.
+> - Set `baseurl` to `{% raw %}${{ steps.pages.outputs.base_path }}{% endraw %}`.
+>
+> This ensures Jekyll generates correct absolute URLs for stylesheets, scripts, and links. Leaving it empty will cause assets to fail to load on the deployed site.
 
 ### Upload & Deploy
 
@@ -169,8 +177,8 @@ Packages the `output_dir` as a Pages artifact. The `deploy` job then picks it up
 | --- | --- | --- | --- |
 | `input_dir` | Path to your Jekyll source directory, relative to the repository root. | No | `.` |
 | `output_dir` | Path where the built site is written, relative to the repository root. | No | `_site` |
-| `url` | Full URL of the deployed site (e.g. `https://my-org.github.io`). Use `{% raw %}${{ ${{ steps.pages.outputs.origin }} }}{% endraw %}`. | No | `` |
-| `baseurl` | Base path appended to the URL (e.g. `/my-repo`). Leave empty `""` when deploying to a custom domain or organization Pages site. Use `{% raw %}${{ ${{ steps.pages.outputs.base_path }} }}{% endraw %}` for the `baseurl` when deploying to user GitHub Pages. | No | `/` |
+| `url` | Full URL of the deployed site (e.g. `https://my-org.github.io`). | No | `` |
+| `baseurl` | Base path appended to the URL (e.g. `/my-repo`). Leave empty `""` when deploying to a custom domain or organization Pages site. | No | `/` |
 
 ---
 
@@ -221,11 +229,11 @@ This is a note.
 
 ```markdown
 {: .new }
-This is a new.
+This is new.
 ```
 
 {: .new }
-This is a new.
+This is new.
 
 ```markdown
 {: .highlight }
