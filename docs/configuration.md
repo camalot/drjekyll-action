@@ -169,10 +169,10 @@ Math rendering engine. Set to `katex` to enable KaTeX rendering of LaTeX express
 math: katex
 ```
 
-Inline math: `` $E = mc^2$ ``  
+Inline math: `` $E = mc^2$ ``
 Display math:
 
-```
+```math
 $$
 \int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
 $$
