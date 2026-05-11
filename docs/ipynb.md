@@ -22,35 +22,43 @@ Jupyter Notebooks can be included in your Dr. Jekyll docs in two ways: as a file
 ``` liquid
 {% raw %}{% ipynb %}{% endraw %}
 {
-  "cells": [
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "# This is a markdown cell\n",
-        "\n",
-        "You can write **markdown** content here."
-      ]
-    },
-    {
-      "cell_type": "code",
-      "execution_count": null,
-      "metadata": {},
-      "outputs": [],
-      "source": [
-        "# This is a code cell\n",
-        "\n",
-        "print('Hello, Dr. Jekyll!')"
-      ]
-    }
-  ],
-  "metadata": {
-    "language_info": {
-      "name": "python"
-    }
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "8eb721cd",
+   "metadata": {},
+   "source": [
+    "# TEST MARKDOWN\n",
+    "\n",
+    "This is a test markdown file to demonstrate the recent edits made to the project. The edits include changes to the configuration file and the head custom HTML file."
+   ]
   },
-  "nbformat": 4,
-  "nbformat_minor": 5
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6173648f",
+   "metadata": {
+    "vscode": {
+     "languageId": "shellscript"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "#!/usr/bin/env bash\n",
+    "\n",
+    "set -u\n",
+    "\n",
+    "echo \"Running tests for drjekyll-action...\""
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
 }
 {% raw %}{% endipynb %}{% endraw %}
 ```
