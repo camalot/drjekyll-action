@@ -16,10 +16,10 @@ You provide a directory of Markdown files and a `_config.yml`. Dr. Jekyll handle
 ## Features
 
 - **Just the Docs theme** — clean, responsive documentation layout with built-in search
-- **Syntax highlighting** — powered by Rouge with multiple colour schemes
+- **Syntax highlighting** — powered by Rouge with multiple color schemes
 - **Math rendering** — KaTeX support out of the box
 - **Callouts** — note, tip, warning, caution, important, and more
-- **Dark/light themes** — multiple colour schemes included
+- **Dark/light themes** — multiple color schemes included
 - **Zero theme files in your repo** — the action provides all theme assets
 
 ---

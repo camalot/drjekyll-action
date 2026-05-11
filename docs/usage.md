@@ -4,10 +4,13 @@ nav_order: 2
 layout: default
 ---
 
+<!-- markdownlint-disable-next-line MD025 MD022 -->
 # ℹ️ Usage
 {: .no_toc }
 
+<!-- markdownlint-disable-next-line MD033 -->
 <details open markdown="block">
+  <!-- markdownlint-disable-next-line MD033 -->
   <summary>Table of contents</summary>
   {: .text-delta }
 1. TOC

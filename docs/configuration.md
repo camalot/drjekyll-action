@@ -4,10 +4,13 @@ title: ⚙️ Configuration
 nav_order: 3
 ---
 
+<!-- markdownlint-disable-next-line MD022 MD025 -->
 # ⚙️ Configuration
 {: .no_toc }
 
+<!-- markdownlint-disable-next-line MD033 -->
 <details open markdown="block">
+  <!-- markdownlint-disable-next-line MD033 -->
   <summary>Table of contents</summary>
   {: .text-delta }
 1. TOC
