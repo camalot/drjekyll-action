@@ -79,7 +79,7 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Dr. Jekyll Build
-        uses: iman-srecore/drjekyll-action@v1
+        uses: camalot/drjekyll-action@v1
         env:
           JEKYLL_ENV: production
         with:
@@ -132,7 +132,7 @@ A full history checkout (`fetch-depth: 0`) is recommended so that Jekyll can rea
 
 ```yaml
 - name: Dr. Jekyll Build
-  uses: iman-srecore/drjekyll-action@v1
+  uses: camalot/drjekyll-action@v1
   env:
     JEKYLL_ENV: production
   with:

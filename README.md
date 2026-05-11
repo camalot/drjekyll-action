@@ -2,7 +2,7 @@
 
 A GitHub Action that builds a Jekyll documentation site using the Dr. Jekyll theme and deploys it to GitHub Pages.
 
-Full documentation is available at **https://iman-srecore.github.io/drjekyll-action**.
+Full documentation is available at **https://camalot.github.io/drjekyll-action**.
 
 ---
 
@@ -14,7 +14,7 @@ Full documentation is available at **https://iman-srecore.github.io/drjekyll-act
   uses: actions/configure-pages@v6
 
 - name: Dr. Jekyll Build
-  uses: iman-srecore/drjekyll-action@v1
+  uses: camalot/drjekyll-action@v1
   env:
     JEKYLL_ENV: production
   with:
@@ -66,7 +66,7 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Dr. Jekyll Build
-        uses: iman-srecore/drjekyll-action@v1
+        uses: camalot/drjekyll-action@v1
         env:
           JEKYLL_ENV: production
         with:
@@ -117,9 +117,9 @@ logo: /assets/images/icon.svg
 
 aux_links:
   "GitHub":
-    - "https://github.com/my-org/my-repo"
+    - "https://github.com/camalot/drjekyll-action"
 
 aux_links_new_tab: true
 ```
 
-See the full [Configuration reference](https://iman-srecore.github.io/drjekyll-action/configuration) for all available options.
+See the full [Configuration reference](https://camalot.github.io/drjekyll-action/configuration) for all available options.

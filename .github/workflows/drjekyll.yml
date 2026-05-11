@@ -42,7 +42,7 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Dr. Jekyll Build
-        uses: iman-srecore/drjekyll-action@v1
+        uses: camalot/drjekyll-action@v1
         env:
           JEKYLL_ENV: production
         with:
