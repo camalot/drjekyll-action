@@ -32,11 +32,11 @@ layout: default
 my-repo/
 ├── .github/
 │   └── workflows/
-│       └── docs.yml        # deployment workflow
+│       └── docs.yml        <~ deployment workflow
 └── docs/
-    ├── _config.yml         # site configuration
-    ├── index.md            # home page
-    └── ...                 # additional pages
+    ├── _config.yml         <~ site configuration
+    ├── index.md            <~ home page
+    └── ...                 <~ additional pages
 ```
 
 ---
