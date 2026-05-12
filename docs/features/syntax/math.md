@@ -7,8 +7,11 @@ layout: default
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->
 # 🧮 Math
+{: .no_toc }
 
-Dr. Jekyll supports rendering mathematical expressions using [KaTeX](https://katex.org/) syntax. You can include inline math by wrapping your [KaTeX](https://katex.org/) code in single dollar signs (`$...$`) or display math by using double dollar signs (`$$...$$`).
+Dr. Jekyll supports rendering mathematical expressions using LaTeX ([KaTeX](https://katex.org/)) syntax. You can include inline math by wrapping your LaTeX code in single dollar signs (`$...$`) or display math by using double dollar signs (`$$...$$`).
+
+{% include toc.md %}
 
 ---
 

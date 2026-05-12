@@ -7,8 +7,13 @@ nav_order: 1
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->
 # 🪐 Jupyter Notebooks
+{: .no_toc }
 
 Jupyter Notebooks can be included in your Dr. Jekyll docs in two ways: as a file or inline. The file method allows you to include an entire notebook from your docs directory, while the inline method lets you embed notebook content directly within your markdown files.
+
+{% include toc.md %}
+
+---
 
 ## FILE
 

@@ -8,18 +8,25 @@ has_children: true
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->
 # 🙈 Syntax Highlighter
+{: .no_toc }
 
 [Rouge](http://rouge.jneen.net/) is a pure Ruby syntax highlighter. It can highlight [over 200 different languages](https://rouge-ruby.github.io/docs/file.Languages.html), and output HTML or ANSI 256-color text. Its HTML output is compatible with stylesheets designed for [Pygments](http://pygments.org/).
 
+{% include toc.md %}
+
+---
+
 Dr. Jekyll uses Rouge for syntax highlighting in code blocks and inline code. Include the language after the opening backticks to enable syntax highlighting:
 
-```markdown
-\`\`\`ruby
+{% highlight markdown %}
+
+```ruby
 def hello_world
   puts "Hello, world!"
 end
-\`\`\`
 ```
+
+{% endhighlight %}
 
 This will render as:
 

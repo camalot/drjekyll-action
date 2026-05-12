@@ -6,10 +6,13 @@ nav_order: 1
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->
 # Dr. Jekyll Action
+{: .no_toc }
 
 Dr. Jekyll is a GitHub Action that builds a Jekyll documentation site using an opinionated, pre-configured theme and deploys it to GitHub Pages — with zero theme boilerplate required in your repository.
 
 You provide a directory of Markdown files and a `_config.yml`. Dr. Jekyll handles the rest: theme, plugins, syntax highlighting, search, math rendering, and more.
+
+{% include toc.md %}
 
 ---
 

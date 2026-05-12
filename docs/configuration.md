@@ -8,14 +8,7 @@ nav_order: 3
 # ⚙️ Configuration
 {: .no_toc }
 
-<!-- markdownlint-disable-next-line MD033 -->
-<details open markdown="block">
-  <!-- markdownlint-disable-next-line MD033 -->
-  <summary>Table of contents</summary>
-  {: .text-delta }
-1. TOC
-{:toc}
-</details>
+{% include toc.md %}
 
 ---
 
