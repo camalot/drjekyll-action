@@ -1,6 +1,7 @@
 ---
 layout: default
 title: 🪐 Jupyter Notebooks
+parent: ⭐ Features
 nav_order: 2
 ---
 
