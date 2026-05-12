@@ -1,6 +1,12 @@
 ---
 remote_theme: just-the-docs/just-the-docs
 
+drjekyll:
+  version: 1.0.0
+  github: "https://github.com/camalot/drjekyll-action"
+  docs: "https://camalot.github.io/drjekyll-action/"
+
+
 url: "{{ input.url }}"
 baseurl: "{{ input.baseurl }}"
 logo: /assets/images/logo.png

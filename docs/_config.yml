@@ -7,11 +7,6 @@ copyright: "&copy; 2026 Ryan Conrad. All rights reserved."
 
 logo: /assets/images/icon.svg
 
-drjekyll:
-  version: 1.0.0
-  github: "https://github.com/camalot/drjekyll-action"
-  docs: "https://camalot.github.io/drjekyll-action/"
-
 # Aux links (top nav)
 aux_links:
   "GitHub":
