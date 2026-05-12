@@ -1,12 +1,13 @@
 ---
-title: 📋 Embedded Frontmatter Table
+title: 📋 Frontmatter Table
 nav_order: 4
 layout: default
 parent: ⭐ Features
+has_children: true
 ---
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->
-# 📋 Embedded Frontmatter Table
+# 📋 Frontmatter Table
 {: .no_toc }
 
 Dr. Jekyll can detect YAML metadata blocks embedded inside a page's content and automatically render them as styled tables. This is useful for documenting structured metadata inline — for example, Agent Skill definitions, plugin manifests, or configuration schemas.
@@ -50,12 +51,37 @@ The `---` block above renders as:
 | YAML Type | Example | Rendered As |
 | --- | --- | --- |
 | String | `label: hello` | `hello` |
-| Number | `version: 42` | `42` |
-| Boolean true | `enabled: true` | `true` |
-| Boolean false | `deprecated: false` | `false` |
+| Number | `version: 42` | `<code>42</code>` |
+| Boolean | `enabled: true` | `<code>true</code>` |
 | Null | `notes: ~` | *(empty cell)* |
-| Array | `tags: [a, b, c]` | `a, b, c` |
-| Nested hash | `config: {key: val}` | `key: val` |
+| Array of strings | `tags: [a, b, c]` | Unordered list |
+| Array of objects | `inputs: [{name: x, required: true}]` | Nested table |
+| Nested hash | `permissions: {network: true}` | `network: true` |
+
+### Array of Objects
+
+When a YAML value is an array of objects, it renders as a nested table inside the cell. All keys across all objects in the array are unioned to form the nested column headers; missing values render as empty cells.
+
+```yaml
+---
+name: my-skill
+inputs:
+  - name: target
+    description: The target system.
+    required: true
+  - name: environment
+    description: Deployment environment.
+    required: false
+    default: dev
+---
+```
+
+The `inputs` cell renders as a nested table:
+
+| name | description | required | default |
+| --- | --- | --- | --- |
+| target | The target system. | true | |
+| environment | Deployment environment. | false | dev |
 
 ---
 
@@ -105,6 +131,5 @@ embedded_frontmatter:
 
 ## Limitations
 
-- **Array-of-objects**: A top-level YAML array (e.g. `- name: x\n  value: y`) is not converted — it passes through unchanged. Only top-level hashes produce a table.
 - **Liquid includes**: Blocks inside `{% raw %}{% include %}{% endraw %}` files are not processed in the parent page's context, since the plugin runs before Liquid resolves includes.
-- **Deeply nested YAML**: Nested hashes are flattened to `key: value` strings. Sub-tables are not rendered.
+- **Deeply nested values**: Values nested inside an array-of-objects are serialized with `.to_s` — sub-tables are not rendered recursively.

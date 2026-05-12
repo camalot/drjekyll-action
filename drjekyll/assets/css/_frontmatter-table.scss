@@ -14,8 +14,20 @@
     }
 
     td {
-      font-family: $mono-font-family;
+      font-family: var(--bs-font-monospace);
       font-size: 0.9em;
+      vertical-align: top;
+
+
+    }
+
+    // Nested tables inside cells (array-of-objects rendering)
+    td > table {
+      margin-bottom: 0;
+
+      thead th {
+        font-size: 0.85em;
+      }
     }
   }
 }
