@@ -1,5 +1,5 @@
 {
-  "name": "Workspace Tasks Dev",
+  "name": "Dr. Jekyll DevContainer",
   "build": {
     "dockerfile": "Dockerfile",
     "context": "."
