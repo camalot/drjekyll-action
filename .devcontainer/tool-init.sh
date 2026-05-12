@@ -61,27 +61,6 @@ function install_act() {
   fi
 }
 
-function jekyll_bundle_prep() {
-  local current_dir
-  current_dir=$(pwd)
-
-  docs_dir="$current_dir/docs"
-  if [ -d "$docs_dir" ]; then
-    echo -e "${COLOR_BLUE}=================================================================${COLOR_RESET}"
-    echo -e "${COLOR_BLUE}Installing Jekyll dependencies for documentation...${COLOR_RESET}"
-    cd "$docs_dir"
-    bundle config set --local path vendor/bundle
-    bundle install --gemfile=drjekyll/Gemfile
-    echo -e "${COLOR_GREEN}Jekyll dependencies installed successfully.${COLOR_RESET}"
-    echo -e "${COLOR_BLUE}=================================================================${COLOR_RESET}"
-    echo ""
-  else
-    echo -e "${COLOR_BLUE}No docs directory found at $docs_dir. Skipping Jekyll bundle prep.${COLOR_RESET}"
-  fi
-  cd "$current_dir"
-
-}
-
 function npm_install() {
   local current_dir
   current_dir=$(pwd)
@@ -169,7 +148,6 @@ echo ""
 
 fix_ssh_permissions
 npm_install
-jekyll_bundle_prep
 install_antigen_bundles
 install_ohmyposh
 

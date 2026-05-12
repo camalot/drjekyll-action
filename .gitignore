@@ -5,6 +5,8 @@
 .env.*
 .env/
 
+.devcontainer/mount/*
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,ruby,visualstudiocode,jekyll
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,ruby,visualstudiocode,jekyll
