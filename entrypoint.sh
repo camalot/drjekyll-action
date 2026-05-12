@@ -294,11 +294,14 @@ function setup_drjekyll() {
 
   log_info "Merging input directory '$INPUT_DIR' with Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR'..."
   # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/header_custom.html files, as they are handled separately
+  group_start "Rsync merge details"
   if ! rsync -avL --ignore-times --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
     log_error "rsync merge failed with exit code $?"
     group_end
+    group_end
     exit 1
   fi
+  group_end
 
   group_start "DrJekyll docs immediately after merge"
   log_info "Key files in input directory:"
@@ -312,8 +315,11 @@ function setup_drjekyll() {
   group_end
 
   # Ensure user config is present in the merged working directory.
+  # This explicitly copies the user's config to override any defaults.
   if [ -f "$INPUT_DIR/_config.yml" ]; then
     log_info "Syncing user config '$INPUT_DIR/_config.yml' to '$DRJEKYLL_DOCS_DIR/_config.yml'"
+    user_title="$(yq eval '.title // "NOTITLE"' "$INPUT_DIR/_config.yml")"
+    log_info "User _config.yml title value: '$user_title'"
     if ! cp "$INPUT_DIR/_config.yml" "$DRJEKYLL_DOCS_DIR/_config.yml"; then
       log_error "Failed to copy user config _config.yml"
       group_end
@@ -321,6 +327,8 @@ function setup_drjekyll() {
     fi
   elif [ -f "$INPUT_DIR/_config.yaml" ]; then
     log_info "Syncing user config '$INPUT_DIR/_config.yaml' to '$DRJEKYLL_DOCS_DIR/_config.yaml'"
+    user_title="$(yq eval '.title // "NOTITLE"' "$INPUT_DIR/_config.yaml")"
+    log_info "User _config.yaml title value: '$user_title'"
     if ! cp "$INPUT_DIR/_config.yaml" "$DRJEKYLL_DOCS_DIR/_config.yaml"; then
       log_error "Failed to copy user config _config.yaml"
       group_end
@@ -336,6 +344,7 @@ function setup_drjekyll() {
   ls -la "$DRJEKYLL_DOCS_DIR"
   group_end
 
+  group_start "User customizations and dependencies"
   setup_user_header_footer
 
   log_info "Header/footer customization files:"
@@ -344,41 +353,74 @@ function setup_drjekyll() {
 
   # if user has their own Gemfile, we need to make sure that the packages that are required by drjekyll are included in the user's Gemfile.
   setup_gems "$DRJEKYLL_DOCS_DIR"
+  group_end
 
   log_directory_snapshot "DrJekyll docs after setup" "$DRJEKYLL_DOCS_DIR" 150
   group_end
 }
 
 function get_config_title() {
-  # Returns the first non-empty 'title' value found across the config file chain.
-  # User configs take precedence over the DrJekyll base config.
+  # Returns the first non-empty 'title' value found in the user's config files only.
+  # User's _config.yml/_config.yaml always take precedence over drjekyll defaults.
+  # Only falls back to _config-drjekyll.yml if user has not provided a config.
+  # NOTE: This function is called inside $() so logging must use >&2 to avoid capture.
   local active_dir="$1"
   local title=""
-  local config_files=(
-    "$active_dir/_config.yml"
-    "$active_dir/_config.yaml"
-    "$active_dir/_config-drjekyll.yml"
-  )
-  for config_file in "${config_files[@]}"; do
-    if [ -f "$config_file" ]; then
-      title="$(yq eval '.title // ""' "$config_file")"
-      if [ -n "$title" ] && [ "$title" != "null" ]; then
-        echo "$title"
-        return
-      fi
+
+  # Check user configs first (should have been merged in by setup_drjekyll)
+  if [ -f "$active_dir/_config.yml" ]; then
+    title="$(yq eval '.title // ""' "$active_dir/_config.yml")"
+    if [ -n "$title" ] && [ "$title" != "null" ]; then
+      echo "[$(timestamp_utc)] [INFO] Title resolved from _config.yml: '$title'" >&2
+      echo "$title"
+      return
     fi
-  done
+  fi
+
+  if [ -f "$active_dir/_config.yaml" ]; then
+    title="$(yq eval '.title // ""' "$active_dir/_config.yaml")"
+    if [ -n "$title" ] && [ "$title" != "null" ]; then
+      echo "[$(timestamp_utc)] [INFO] Title resolved from _config.yaml: '$title'" >&2
+      echo "$title"
+      return
+    fi
+  fi
+
+  # Only use drjekyll defaults if user hasn't provided their own config
+  if [ -f "$active_dir/_config-drjekyll.yml" ]; then
+    title="$(yq eval '.title // ""' "$active_dir/_config-drjekyll.yml")"
+    if [ -n "$title" ] && [ "$title" != "null" ]; then
+      echo "[$(timestamp_utc)] [WARN] No user title found; using drjekyll default title: '$title'" >&2
+      echo "$title"
+      return
+    fi
+  fi
+
+  echo "[$(timestamp_utc)] [WARN] No 'title' found in any config file." >&2
   echo ""
 }
 
 function replace_template_vars() {
   local active_dir="$1"
   group_start "Replace template variables"
+
+  # Debug: check what config files exist
+  log_info "Checking for config files in: $active_dir"
+  log_info "_config.yml exists: $(path_exists_msg "$active_dir/_config.yml")"
+  log_info "_config.yaml exists: $(path_exists_msg "$active_dir/_config.yaml")"
+  log_info "_config-drjekyll.yml exists: $(path_exists_msg "$active_dir/_config-drjekyll.yml")"
+
+  if [ -f "$active_dir/_config.yml" ]; then
+    log_info "Contents of _config.yml (first 10 lines):"
+    head -n 10 "$active_dir/_config.yml" | sed 's/^/  /'
+  fi
+
   local title
   title="$(get_config_title "$active_dir")"
 
   if [ -z "$title" ] || [ "$title" = "null" ]; then
     log_warn "No 'title' found in any config file; '{{ config.title }}' placeholders will remain unreplaced."
+    log_warn "get_config_title returned: '$title'"
     group_end
     return
   fi
