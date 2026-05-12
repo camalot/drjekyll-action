@@ -1,6 +1,6 @@
 ---
 title: 🌳 Tree View
-parent: ⭐ Features
+parent: 🙈 Syntax Highlighter
 nav_order: 2
 layout: default
 ---

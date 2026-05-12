@@ -1,8 +1,8 @@
 ---
 layout: default
 title: 🪐 Jupyter Notebooks
-parent: ⭐ Features
-nav_order: 2
+parent: 🙈 Syntax Highlighter
+nav_order: 1
 ---
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->

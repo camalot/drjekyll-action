@@ -4,6 +4,7 @@ remote_theme: just-the-docs/just-the-docs
 url: "{{ input.url }}"
 baseurl: "{{ input.baseurl }}"
 logo: /assets/images/logo.png
+logo_svg: /assets/images/logo.svg
 favicon: /assets/images/favicon.ico
 
 # Build settings
