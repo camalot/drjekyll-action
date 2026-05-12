@@ -1,0 +1,102 @@
+---
+name: Changelog Generation
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
+
+permissions: {}
+env:
+  ACT: ""
+jobs:
+
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Get Current Version
+        id: current_version
+        run: |
+          CURRENT_VERSION="$(node -p "require('./package.json').version")"
+          # if $CURRENT_VERSION starts with v do not add
+          if [[ "$CURRENT_VERSION" == v* ]]; then
+            CURRENT_VERSION="${CURRENT_VERSION:1}"
+          fi
+
+          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Get Next Version
+        id: next_version
+        run: |
+          NEXT_VERSION="$(npx git-cliff --bumped-version --offline --unreleased)"
+          # if $NEXT_VERSION starts with v do not add
+          if [[ "$NEXT_VERSION" == v* ]]; then
+            NEXT_VERSION="${NEXT_VERSION:1}"
+          fi
+
+          echo "next_version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Clean Version and Tag
+        id: tag
+        run: |
+          if [[ -z "$VERSION" ]]; then
+            echo "VERSION is empty, using current version"
+            VERSION="${CURRENT_VERSION}"
+          fi
+          if [[ "$VERSION" == v* ]]; then
+            VERSION="${VERSION:1}"
+          fi
+
+          TAG="v${VERSION}"
+          TAG_MAJOR="v${VERSION%%.*}"
+          TAG_MAJOR_MINOR="v${VERSION%.*}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "tag_major=$TAG_MAJOR" >> "$GITHUB_OUTPUT"
+          echo "tag_major_minor=$TAG_MAJOR_MINOR" >> "$GITHUB_OUTPUT"
+        env:
+          VERSION: ${{ steps.next_version.outputs.next_version }}
+          CURRENT_VERSION: ${{ steps.current_version.outputs.current_version }}
+
+      - name: Generate Changelog
+        run: |
+          npm version "${VERSION}" --no-git-tag-version
+          npx git-cliff --bump --unreleased --offline --prepend CHANGELOG.md
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          TAG_MAJOR: ${{ steps.tag.outputs.tag_major }}
+          TAG_MAJOR_MINOR: ${{ steps.tag.outputs.tag_major_minor }}
+
+      # COMMIT VERSION AND CHANGELOG
+      - name: Commit Version and Changelog
+        if: ${{ !env.ACT }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "CHANGELOG.md" "package.json" "package-lock.json"
+          git commit -m "chore(changelog): ${VERSION} 🚀" || echo "No changes to commit"
+          # need to delete tags if they already exist to avoid error
+          ALL_TAGS=( ${TAG} ${TAG_MAJOR} ${TAG_MAJOR_MINOR} )
+          for tag_item in "${ALL_TAGS[@]}"; do
+            if git rev-parse "${tag_item}" >/dev/null 2>&1; then
+              git tag -d "${tag_item}"
+            fi
+            git tag "${tag_item}"
+          done
+          git push origin HEAD --tags
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          TAG_MAJOR: ${{ steps.tag.outputs.tag_major }}
+          TAG_MAJOR_MINOR: ${{ steps.tag.outputs.tag_major_minor }}

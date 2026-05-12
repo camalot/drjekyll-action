@@ -1,0 +1,25 @@
+{
+  "name": "drjekyll-action",
+  "displayName": "Dr. Jekyll Action",
+  "description": "GitHub Action for building and deploying Jekyll sites",
+  "readme": "README.md",
+  "version": "1.0.0",
+  "author": {
+    "name": "Ryan Conrad",
+    "email": "camalot@gmail.com"
+  },
+  "homepage": "https://github.com/camalot/drjekyll-action",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/camalot/drjekyll-action.git"
+  },
+  "bugs": {
+    "url": "https://github.com/camalot/drjekyll-action/issues",
+    "new": "https://github.com/camalot/drjekyll-action/issues/new/choose"
+  },
+  "publisher": "DarthMinos | camalot | Ryan Conrad <camalot@gmail.com>",
+  "keywords": [],
+  "devDependencies": {
+    "git-cliff": "^2.12.0"
+  }
+}
