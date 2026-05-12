@@ -1,0 +1,21 @@
+.frontmatter-table {
+  margin: 1rem 0 1.5rem;
+  overflow-x: auto;
+
+  table {
+    width: auto;
+    min-width: 50%;
+
+    thead th {
+      background-color: $theme-bootstrap-secondary-bg;
+      color: $theme-bootstrap-body-color;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    td {
+      font-family: $mono-font-family;
+      font-size: 0.9em;
+    }
+  }
+}

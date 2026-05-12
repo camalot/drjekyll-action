@@ -1,4 +1,6 @@
 docs/
+_plans/
+vendor/bundle/
 .git
 .github
 .gitignore
