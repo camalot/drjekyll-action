@@ -6,8 +6,6 @@ baseurl: "{{ input.baseurl }}"
 logo: /assets/images/logo.png
 favicon: /assets/images/favicon.ico
 
-
-
 # Build settings
 plugins:
   - jekyll-remote-theme

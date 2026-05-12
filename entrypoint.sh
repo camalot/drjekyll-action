@@ -294,7 +294,7 @@ function setup_drjekyll() {
 
   log_info "Merging input directory '$INPUT_DIR' with Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR'..."
   # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/header_custom.html files, as they are handled separately
-  if ! rsync -avL --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
+  if ! rsync -avL --ignore-times --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
     log_error "rsync merge failed with exit code $?"
     group_end
     exit 1
@@ -513,7 +513,7 @@ function setup_work_dir() {
 
   # Layer 2: overlay user input files (same exclusions as the action merge).
   log_info "Overlaying input directory '$INPUT_DIR' onto work dir..."
-  if ! rsync -avL \
+  if ! rsync -avL --ignore-times \
       --exclude='Gemfile' \
       --exclude='Gemfile.lock' \
       --exclude='_config-drjekyll.yml' \

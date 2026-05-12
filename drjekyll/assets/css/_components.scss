@@ -26,7 +26,7 @@
 }
 
 .site-title::after {
-  content: 'Dr. Jekyll';
+  content: '{{ config.title }}';
   font-size: 1.125rem;
   font-weight: 600;
   color: $body-heading-color;
