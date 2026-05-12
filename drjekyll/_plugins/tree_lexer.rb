@@ -35,6 +35,10 @@ module Rouge
           push :tree_content
         end
 
+        # Tree command summary line: "N directories, N files" (or singular forms).
+        # Emitted as a comment so it is visually de-emphasised.
+        rule %r{^\d+ director(?:y|ies), \d+ files?\n?}, Comment::Single
+
         # Title / root-node line — no leading box-drawing prefix on this line.
         # Zero-width lookahead: confirmed non-empty so :title_content advances.
         rule %r{^(?=[^\n])} do
@@ -62,6 +66,10 @@ module Rouge
         # End of line — pop back to :root
         rule %r{\n}, Text::Whitespace, :pop!
 
+        # Symlink arrow emitted by the `tree` command: "name -> target".
+        # The arrow is styled as an operator; the target is handled by :symlink_target.
+        rule %r{->}, Operator, :symlink_target
+
         # Item labels, file names, task names.
         # Excludes box-drawing/triangle chars, slashes, colons, spaces/tabs,
         # and comment markers. The |<(?!-) alternative allows a lone <.
@@ -84,6 +92,15 @@ module Rouge
 
         # Title text (bold). A lone < not followed by - is allowed in titles.
         rule %r{[^\n/:←< \t]+|<(?!-)}, Generic::Strong
+      end
+
+      # Symlink target following the -> arrow (tree command output).
+      # Path separators are styled as keywords; everything else as a string.
+      state :symlink_target do
+        rule %r{[ \t]+}, Text::Whitespace
+        rule %r{[/:]}, Keyword
+        rule %r{[^\n/ \t:]+}, Str
+        rule %r{\n}, Text::Whitespace, :pop!
       end
 
       # Comment text following ← or <- through end of line.

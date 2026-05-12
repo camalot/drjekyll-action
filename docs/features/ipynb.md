@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 🪐 Jupyter Notebooks
-nav_order: 99
+nav_order: 2
 ---
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->
