@@ -2,6 +2,7 @@
 title: 🌳 Tree View
 parent: ⭐ Features
 nav_order: 2
+layout: default
 ---
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->

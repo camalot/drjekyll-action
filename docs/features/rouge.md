@@ -2,6 +2,7 @@
 title: 🙈 Syntax Highlighter
 parent: ⭐ Features
 nav_order: 1
+layout: default
 ---
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->

@@ -1,8 +1,8 @@
 ---
 title: ⭐ Features
 nav_order: 1
-parent: 🏠 Home
 has_children: true
+layout: default
 ---
 
 <!-- markdownlint-disable-next-line MD025 MD022 -->
