@@ -109,19 +109,19 @@
 
           updateThemeUi(themeName);
 
-          // Sync Mermaid theme when site theme changes
-          if (typeof window.MermaidThemeMap !== 'undefined' && typeof window.mermaid !== 'undefined') {
+          // Notify Mermaid to update diagrams for the selected docs theme.
+          if (typeof window.MermaidThemeMap !== 'undefined') {
             var mermaidTheme = window.MermaidThemeMap[themeName] || window.MermaidThemeMap.dracula;
             window.MermaidThemeVariables = mermaidTheme;
-            if (typeof window.mermaid.initialize === 'function') {
-              window.mermaid.initialize({ theme: 'base', themeVariables: mermaidTheme });
-            }
-            // Re-render any existing Mermaid diagrams with the new theme
-            if (typeof window.mermaid.run === 'function') {
-              window.mermaid.run({ querySelector: '.language-mermaid' }).catch(function() {
-                // Ignore errors if mermaid rendering fails
-              });
-            }
+
+            document.dispatchEvent(
+              new CustomEvent('drjekyll:theme-changed', {
+                detail: {
+                  themeName: themeName,
+                  mermaidThemeVariables: mermaidTheme,
+                },
+              }),
+            );
           }
         };
 
