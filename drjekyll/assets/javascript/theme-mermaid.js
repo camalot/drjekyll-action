@@ -21,6 +21,9 @@
       background: '#202326',
       mainBkg: '#292C30',
       textColor: '#FCFCFC',
+      noteBkgColor: '#292C30',
+      noteBorderColor: '#3DAEE9',
+      noteTextColor: '#FCFCFC',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -39,6 +42,9 @@
       background: '#FFF8F0',
       mainBkg: '#FFFAF5',
       textColor: '#000',
+      noteBkgColor: '#fde9c4',
+      noteBorderColor: '#d4720a',
+      noteTextColor: '#000',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: false
@@ -57,6 +63,9 @@
       background: '#0d0221',
       mainBkg: '#1a0033',
       textColor: '#ffed00',
+      noteBkgColor: '#1a0033',
+      noteBorderColor: '#ffed00',
+      noteTextColor: '#ffed00',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -75,6 +84,9 @@
       background: '#282a36',
       mainBkg: '#44475a',
       textColor: '#f8f8f2',
+      noteBkgColor: '#44475a',
+      noteBorderColor: '#bd93f9',
+      noteTextColor: '#f8f8f2',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -93,6 +105,9 @@
       background: '#2a2545',
       mainBkg: '#39314a',
       textColor: '#f5f0ff',
+      noteBkgColor: '#39314a',
+      noteBorderColor: '#e96bde',
+      noteTextColor: '#f5f0ff',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -111,6 +126,9 @@
       background: '#1a1a1a',
       mainBkg: '#2d2d2d',
       textColor: '#f0f0f0',
+      noteBkgColor: '#2d2d2d',
+      noteBorderColor: '#4169e1',
+      noteTextColor: '#f0f0f0',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -129,6 +147,9 @@
       background: '#0d3d1a',
       mainBkg: '#1a5c30',
       textColor: '#e8f5e9',
+      noteBkgColor: '#1a5c30',
+      noteBorderColor: '#2ecc71',
+      noteTextColor: '#e8f5e9',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -147,6 +168,9 @@
       background: '#2a2a2a',
       mainBkg: '#3a3a3a',
       textColor: '#e0e0e0',
+      noteBkgColor: '#3a3a3a',
+      noteBorderColor: '#888888',
+      noteTextColor: '#e0e0e0',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -165,6 +189,9 @@
       background: '#0d1419',
       mainBkg: '#1a2632',
       textColor: '#d0d0d0',
+      noteBkgColor: '#1a2632',
+      noteBorderColor: '#74d7e8',
+      noteTextColor: '#d0d0d0',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -183,6 +210,9 @@
       background: '#faf4f1',
       mainBkg: '#fdfbf9',
       textColor: '#000',
+      noteBkgColor: '#fdfbf9',
+      noteBorderColor: '#fbc02d',
+      noteTextColor: '#000',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: false
@@ -201,6 +231,9 @@
       background: '#1d1f28',
       mainBkg: '#28272e',
       textColor: '#d5d5d5',
+      noteBkgColor: '#28272e',
+      noteBorderColor: '#fbc02d',
+      noteTextColor: '#d5d5d5',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -219,6 +252,9 @@
       background: '#002b36',
       mainBkg: '#00404d',
       textColor: '#ffffff',
+      noteBkgColor: '#00404d',
+      noteBorderColor: '#80cbc4',
+      noteTextColor: '#ffffff',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -237,6 +273,9 @@
       background: '#000000',
       mainBkg: '#1a1a1a',
       textColor: '#00ff00',
+      noteBkgColor: '#1a1a1a',
+      noteBorderColor: '#00ff00',
+      noteTextColor: '#00ff00',
       fontSize: '16px',
       fontFamily: '"OCR A", monospace, "Courier New"',
       darkMode: true
@@ -255,6 +294,9 @@
       background: '#0a0500',
       mainBkg: '#1a0f00',
       textColor: '#ffb000',
+      noteBkgColor: '#1a0f00',
+      noteBorderColor: '#ffb000',
+      noteTextColor: '#ffb000',
       fontSize: '16px',
       fontFamily: '"OCR A", monospace, "Courier New"',
       darkMode: true
@@ -273,6 +315,9 @@
       background: '#000000',
       mainBkg: '#001a1a',
       textColor: '#00ffff',
+      noteBkgColor: '#001a1a',
+      noteBorderColor: '#00ffff',
+      noteTextColor: '#00ffff',
       fontSize: '16px',
       fontFamily: '"OCR A", monospace, "Courier New"',
       darkMode: true
@@ -291,6 +336,9 @@
       background: '#000000',
       mainBkg: '#001a00',
       textColor: '#00ff00',
+      noteBkgColor: '#001a00',
+      noteBorderColor: '#00ff00',
+      noteTextColor: '#00ff00',
       fontSize: '16px',
       fontFamily: '"OCR A", monospace, "Courier New"',
       darkMode: true
@@ -309,6 +357,9 @@
       background: '#0a0000',
       mainBkg: '#1a0000',
       textColor: '#ff0000',
+      noteBkgColor: '#1a0000',
+      noteBorderColor: '#ff0000',
+      noteTextColor: '#ff0000',
       fontSize: '16px',
       fontFamily: '"OCR A", monospace, "Courier New"',
       darkMode: true
@@ -327,6 +378,9 @@
       background: '#000000',
       mainBkg: '#1a1a1a',
       textColor: '#ffffff',
+      noteBkgColor: '#1a1a1a',
+      noteBorderColor: '#ffffff',
+      noteTextColor: '#ffffff',
       fontSize: '16px',
       fontFamily: '"OCR A", monospace, "Courier New"',
       darkMode: true
@@ -345,6 +399,9 @@
       background: '#0a0a00',
       mainBkg: '#1a1a00',
       textColor: '#ffff00',
+      noteBkgColor: '#1a1a00',
+      noteBorderColor: '#ffff00',
+      noteTextColor: '#ffff00',
       fontSize: '16px',
       fontFamily: '"OCR A", monospace, "Courier New"',
       darkMode: true
@@ -363,6 +420,9 @@
       background: '#1a1b26',
       mainBkg: '#24283b',
       textColor: '#c0caf5',
+      noteBkgColor: '#24283b',
+      noteBorderColor: '#7aa2f7',
+      noteTextColor: '#c0caf5',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
@@ -381,6 +441,9 @@
       background: '#000000',
       mainBkg: '#0a0a0a',
       textColor: '#00ffff',
+      noteBkgColor: '#0a0a0a',
+      noteBorderColor: '#00ffff',
+      noteTextColor: '#00ffff',
       fontSize: '16px',
       fontFamily: 'monospace',
       darkMode: true
@@ -399,11 +462,21 @@
       background: '#1a1a1a',
       mainBkg: '#2d2d2d',
       textColor: '#f5f5f5',
+      noteBkgColor: '#2d2d2d',
+      noteBorderColor: '#dd4814',
+      noteTextColor: '#f5f5f5',
       fontSize: '16px',
       fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
       darkMode: true
     }
   };
+
+  // Keep pie slice gutters and outer ring aligned with each theme palette.
+  Object.keys(mermaidThemes).forEach(function (themeName) {
+    var theme = mermaidThemes[themeName];
+    theme.pieStrokeColor = theme.background;
+    theme.pieOuterStrokeColor = theme.primaryBorderColor;
+  });
 
   // Set initial Mermaid theme based on current theme
   function initMermaidTheme() {
