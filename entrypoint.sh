@@ -602,10 +602,10 @@ function setup_work_dir() {
   else
     touch "$DRJEKYLL_WORK_DIR/_includes/user_footer_custom.html"
   fi
-  if [ -f "$INPUT_DIR/_includes/header_custom.html" ]; then
-    cp "$INPUT_DIR/_includes/header_custom.html" "$DRJEKYLL_WORK_DIR/_includes/user_header_custom.html"
+  if [ -f "$INPUT_DIR/_includes/head_custom.html" ]; then
+    cp "$INPUT_DIR/_includes/head_custom.html" "$DRJEKYLL_WORK_DIR/_includes/user_head_custom.html"
   else
-    touch "$DRJEKYLL_WORK_DIR/_includes/user_header_custom.html"
+    touch "$DRJEKYLL_WORK_DIR/_includes/user_head_custom.html"
   fi
 
   log_directory_snapshot "Work directory after merge" "$DRJEKYLL_WORK_DIR" 150
