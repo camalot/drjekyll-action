@@ -1,4 +1,4 @@
 {
   theme: "base",
-  themeVariables: window.MermaidThemeVariables || {}
+    themeVariables: window.MermaidThemeVariables || {}
 };
