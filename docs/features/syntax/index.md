@@ -61,6 +61,5 @@ Dr. Jekyll's extended language support includes:
 - [Jupyter Notebooks](ipynb.md)
 <!-- - [Mermaid Diagrams](mermaid.md)
 - [PlantUML Diagrams](plantuml.md) -->
-- [TaskIgnore](taskignore.md)
-<!-- - [YAML Front Matter](yaml.md) -->
+- [YAML Front Matter](frontmatter/index.md)
 - [Tree View](treeview.md)

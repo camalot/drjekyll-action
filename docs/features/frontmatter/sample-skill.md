@@ -53,6 +53,7 @@ references:
 
 last_updated: YYYY-MM-DD
 ---
+{: .table .table-striped .table-dark }
 
 # SKILL.md
 
