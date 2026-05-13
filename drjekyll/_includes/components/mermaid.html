@@ -45,7 +45,6 @@ Adds runtime support for DrJekyll theme switching by listening for
   }
 
   void rerenderMermaid().catch(function () {
-    // Keep page usable if a diagram fails to render.
   });
 
   document.addEventListener('drjekyll:theme-changed', function (event) {
@@ -54,7 +53,6 @@ Adds runtime support for DrJekyll theme switching by listening for
     }
 
     void rerenderMermaid().catch(function () {
-      // Keep page usable if a single diagram fails to re-render.
     });
   });
 </script>
