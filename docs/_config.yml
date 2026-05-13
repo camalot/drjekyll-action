@@ -13,3 +13,6 @@ aux_links:
     - "https://github.com/camalot/drjekyll-action"
 
 aux_links_new_tab: true
+
+mermaid:
+  version: "11.15.0"
