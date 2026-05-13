@@ -1,6 +1,4 @@
 ---
-remote_theme: just-the-docs/just-the-docs
-
 title: Dr. Jekyll
 description: Documentation for the Dr. Jekyll GitHub Action, which builds and deploys Jekyll sites to GitHub Pages.
 copyright: "&copy; 2026 Ryan Conrad. All rights reserved."
@@ -13,6 +11,3 @@ aux_links:
     - "https://github.com/camalot/drjekyll-action"
 
 aux_links_new_tab: true
-
-mermaid:
-  version: "11.15.0"

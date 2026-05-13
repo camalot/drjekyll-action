@@ -5,6 +5,9 @@
 {% include katex.html %}
 {% endcase %}
 
+<!-- Initialize Mermaid theme variables before Mermaid loads -->
+<script src='{{ "/assets/javascript/theme-mermaid.js" | prepend: site.baseurl | prepend: site.url }}'></script>
+
 {{% include user_head_custom.html %}}
 
 <!--

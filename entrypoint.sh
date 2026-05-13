@@ -501,6 +501,23 @@ function build_docs() {
     exit 1
   fi
 
+  # Ensure mermaid config from _config-drjekyll.yml is merged into user's _config.yml
+  # so it takes effect before Jekyll's remote theme processing.
+  log_info "Merging mermaid configuration into user config..."
+  if ! yq eval '.mermaid |= . // (load("'$DRJEKYLL_DOCS_DIR'/_config-drjekyll.yml") | .mermaid)' -i "$DRJEKYLL_DOCS_DIR/_config.yml"; then
+    log_error "yq merge of mermaid config failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  # Remove remote_theme from user config if present; DrJekyll's theme is authoritative
+  log_info "Removing remote_theme from user config if present..."
+  if ! yq eval 'del(.remote_theme)' -i "$DRJEKYLL_DOCS_DIR/_config.yml"; then
+    log_error "yq delete of remote_theme failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
   # Build the Jekyll site into the temp directory.
   log_info "Building Jekyll site from '$DRJEKYLL_DOCS_DIR' to '$BUILD_TMP_DIR'..."
   log_info "Final output will be copied to: $OUTPUT_DIR"
@@ -631,6 +648,23 @@ function serve_docs() {
   log_info "Setting baseurl in work dir _config-drjekyll.yml to '$INPUT_BASEURL' using yq..."
   if ! yq eval ".baseurl = \"$INPUT_BASEURL\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
     log_error "yq update of baseurl failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  # Ensure mermaid config from _config-drjekyll.yml is merged into user's _config.yml
+  # so it takes effect before Jekyll's remote theme processing.
+  log_info "Merging mermaid configuration into user config..."
+  if ! yq eval '.mermaid |= . // (load("'$DRJEKYLL_WORK_DIR'/_config-drjekyll.yml") | .mermaid)' -i "$DRJEKYLL_WORK_DIR/_config.yml"; then
+    log_error "yq merge of mermaid config failed with exit code $?"
+    group_end
+    exit 1
+  fi
+
+  # Remove remote_theme from user config if present; DrJekyll's theme is authoritative
+  log_info "Removing remote_theme from user config if present..."
+  if ! yq eval 'del(.remote_theme)' -i "$DRJEKYLL_WORK_DIR/_config.yml"; then
+    log_error "yq delete of remote_theme failed with exit code $?"
     group_end
     exit 1
   fi

@@ -1,0 +1,102 @@
+/* Mermaid diagram styling for all themes */
+
+/* Container and general styling */
+.language-mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+}
+
+/* SVG container adjustments */
+.language-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mermaid diagram elements - ensure good contrast */
+.mermaidDiagram {
+  display: flex;
+  justify-content: center;
+}
+
+/* Improve readability of text in diagrams */
+.mermaid text {
+  font-weight: 500;
+}
+
+/* Node styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node polygon,
+.mermaid .node path {
+  stroke-width: 1.5px;
+}
+
+/* Edge/line styling */
+.mermaid .edgePath path {
+  stroke-width: 1.5px;
+}
+
+/* Flowchart-specific improvements */
+.mermaid .flowchart-v2 .node rect {
+  min-height: 40px;
+}
+
+/* Sequence diagram improvements */
+.mermaid .sequence .actor,
+.mermaid .sequence .participant {
+  min-width: 80px;
+}
+
+/* State diagram improvements */
+.mermaid .state .node {
+  min-width: 60px;
+}
+
+/* Gantt chart improvements */
+.mermaid .gantt .taskText {
+  font-size: 14px;
+}
+
+/* Class diagram improvements */
+.mermaid .classdiagram .node {
+  min-width: 100px;
+}
+
+/* ER diagram improvements */
+.mermaid .erDiagram .entity {
+  min-width: 80px;
+}
+
+/* Title styling */
+.mermaid .title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Ensure proper spacing for nested content */
+.mermaid foreignObject {
+  overflow: visible;
+}
+
+/* Print-friendly styles */
+@media print {
+  .language-mermaid {
+    page-break-inside: avoid;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .language-mermaid {
+    margin: 1rem 0;
+    font-size: 12px;
+  }
+
+  .mermaid text {
+    font-size: 11px;
+  }
+}
