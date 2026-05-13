@@ -250,8 +250,8 @@ function setup_gems() {
   group_end
 }
 
-function setup_user_header_footer() {
-  # copy the input_dir/_includes/footer_custom.html and input_dir/_includes/header_custom.html to the drjekyll docs directory as _includes/user_footer_custom.html and _includes/user_header_custom.html
+function setup_user_head_footer() {
+  # copy the input_dir/_includes/footer_custom.html and input_dir/_includes/head_custom.html to the drjekyll docs directory as _includes/user_footer_custom.html and _includes/user_head_custom.html
   if [ -f "$INPUT_DIR/_includes/footer_custom.html" ]; then
     echo "Copying '$INPUT_DIR/_includes/footer_custom.html' to '$DRJEKYLL_DOCS_DIR/_includes/user_footer_custom.html'..."
     cp "$INPUT_DIR/_includes/footer_custom.html" "$DRJEKYLL_DOCS_DIR/_includes/user_footer_custom.html"
@@ -259,11 +259,11 @@ function setup_user_header_footer() {
     touch "$DRJEKYLL_DOCS_DIR/_includes/user_footer_custom.html"
   fi
 
-  if [ -f "$INPUT_DIR/_includes/header_custom.html" ]; then
-    echo "Copying '$INPUT_DIR/_includes/header_custom.html' to '$DRJEKYLL_DOCS_DIR/_includes/user_header_custom.html'..."
-    cp "$INPUT_DIR/_includes/header_custom.html" "$DRJEKYLL_DOCS_DIR/_includes/user_header_custom.html"
+  if [ -f "$INPUT_DIR/_includes/head_custom.html" ]; then
+    echo "Copying '$INPUT_DIR/_includes/head_custom.html' to '$DRJEKYLL_DOCS_DIR/_includes/user_head_custom.html'..."
+    cp "$INPUT_DIR/_includes/head_custom.html" "$DRJEKYLL_DOCS_DIR/_includes/user_head_custom.html"
   else
-    touch "$DRJEKYLL_DOCS_DIR/_includes/user_header_custom.html"
+    touch "$DRJEKYLL_DOCS_DIR/_includes/user_head_custom.html"
   fi
 }
 
@@ -290,12 +290,12 @@ function setup_drjekyll() {
 
   # Merge the input directory with the drjekyll docs directory. This will allow the Jekyll build to find the necessary configuration and assets. We will copy the contents of the input directory to the drjekyll docs directory, overwriting any existing files. This will allow the user to override any configuration or assets that are provided by drjekyll.
 
-  # input_dir/_includes/footer_custom.html and input_dir/_includes/header_custom.html and copy them to the drjekyll docs directory as _includes/user_footer_custom.html and _includes/user_header_custom.html. They are then included in the drjekyll header and footer includes, allowing the user to customize the header and footer of their site without modifying the drjekyll includes.
+  # input_dir/_includes/footer_custom.html and input_dir/_includes/head_custom.html and copy them to the drjekyll docs directory as _includes/user_footer_custom.html and _includes/user_head_custom.html. They are then included in the drjekyll header and footer includes, allowing the user to customize the header and footer of their site without modifying the drjekyll includes.
 
   log_info "Merging input directory '$INPUT_DIR' with Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR'..."
-  # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/header_custom.html files, as they are handled separately
+  # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/head_custom.html files, as they are handled separately
   group_start "Rsync merge details"
-  if ! rsync -avL --ignore-times --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/header_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
+  if ! rsync -avL --ignore-times --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/head_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
     log_error "rsync merge failed with exit code $?"
     group_end
     group_end
@@ -345,11 +345,11 @@ function setup_drjekyll() {
   group_end
 
   group_start "User customizations and dependencies"
-  setup_user_header_footer
+  setup_user_head_footer
 
   log_info "Header/footer customization files:"
   log_info "user_footer_custom.html present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_includes/user_footer_custom.html")"
-  log_info "user_header_custom.html present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_includes/user_header_custom.html")"
+  log_info "user_head_custom.html present: $(path_exists_msg "$DRJEKYLL_DOCS_DIR/_includes/user_head_custom.html")"
 
   # if user has their own Gemfile, we need to make sure that the packages that are required by drjekyll are included in the user's Gemfile.
   setup_gems "$DRJEKYLL_DOCS_DIR"
@@ -577,7 +577,7 @@ function setup_work_dir() {
       --exclude='Gemfile.lock' \
       --exclude='_config-drjekyll.yml' \
       --exclude='_includes/footer_custom.html' \
-      --exclude='_includes/header_custom.html' \
+      --exclude='_includes/head_custom.html' \
       "$INPUT_DIR/" "$DRJEKYLL_WORK_DIR/"; then
     log_error "rsync of input dir into work dir failed with exit code $?"
     group_end
