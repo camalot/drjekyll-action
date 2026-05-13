@@ -26,7 +26,7 @@ Adds runtime support for DrJekyll theme switching by listening for
     return config;
   }
 
-  function rerenderMermaid() {
+  function resetDiagramSources() {
     var nodes = document.querySelectorAll('.language-mermaid');
     nodes.forEach(function (node) {
       if (!node.dataset.mermaidSource) {
@@ -36,20 +36,26 @@ Adds runtime support for DrJekyll theme switching by listening for
       }
       node.removeAttribute('data-processed');
     });
-
-    mermaid.initialize(buildConfig());
-    mermaid.run({ querySelector: '.language-mermaid' }).catch(function () {
-      // Keep page usable if a single diagram fails to re-render.
-    });
   }
 
-  rerenderMermaid();
+  async function rerenderMermaid() {
+    resetDiagramSources();
+    mermaid.initialize(buildConfig());
+    await mermaid.run({ querySelector: '.language-mermaid' });
+  }
+
+  void rerenderMermaid().catch(function () {
+    // Keep page usable if a diagram fails to render.
+  });
 
   document.addEventListener('drjekyll:theme-changed', function (event) {
     if (event && event.detail && event.detail.mermaidThemeVariables) {
       window.MermaidThemeVariables = event.detail.mermaidThemeVariables;
     }
-    rerenderMermaid();
+
+    void rerenderMermaid().catch(function () {
+      // Keep page usable if a single diagram fails to re-render.
+    });
   });
 </script>
 
@@ -69,7 +75,7 @@ Adds runtime support for DrJekyll theme switching by listening for
     return config;
   }
 
-  function rerenderMermaid() {
+  function resetDiagramSources() {
     var nodes = document.querySelectorAll('.language-mermaid');
     nodes.forEach(function (node) {
       if (!node.dataset.mermaidSource) {
@@ -79,7 +85,10 @@ Adds runtime support for DrJekyll theme switching by listening for
       }
       node.removeAttribute('data-processed');
     });
+  }
 
+  function rerenderMermaid() {
+    resetDiagramSources();
     mermaid.initialize(buildConfig());
     window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
   }
