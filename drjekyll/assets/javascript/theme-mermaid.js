@@ -425,10 +425,6 @@
   // Expose theme map globally so theme.js can use it
   window.MermaidThemeMap = mermaidThemes;
 
-  // Initialize on load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMermaidTheme);
-  } else {
-    initMermaidTheme();
-  }
+  // Initialize immediately so Mermaid's first render picks the selected theme.
+  initMermaidTheme();
 })();

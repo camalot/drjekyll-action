@@ -29,11 +29,18 @@ Adds runtime support for DrJekyll theme switching by listening for
   function rerenderMermaid() {
     var nodes = document.querySelectorAll('.language-mermaid');
     nodes.forEach(function (node) {
+      if (!node.dataset.mermaidSource) {
+        node.dataset.mermaidSource = node.textContent;
+      } else {
+        node.textContent = node.dataset.mermaidSource;
+      }
       node.removeAttribute('data-processed');
     });
 
     mermaid.initialize(buildConfig());
-    mermaid.run({ querySelector: '.language-mermaid' });
+    mermaid.run({ querySelector: '.language-mermaid' }).catch(function () {
+      // Keep page usable if a single diagram fails to re-render.
+    });
   }
 
   rerenderMermaid();
@@ -65,6 +72,11 @@ Adds runtime support for DrJekyll theme switching by listening for
   function rerenderMermaid() {
     var nodes = document.querySelectorAll('.language-mermaid');
     nodes.forEach(function (node) {
+      if (!node.dataset.mermaidSource) {
+        node.dataset.mermaidSource = node.textContent;
+      } else {
+        node.textContent = node.dataset.mermaidSource;
+      }
       node.removeAttribute('data-processed');
     });
 
