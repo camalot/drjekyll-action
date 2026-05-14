@@ -71,11 +71,11 @@
 }
 
 /* TreeView diagram improvements */
-svg .treeView-node-label {
+text.treeView-node-label {
   fill: $body-text-color !important;
 }
 
-svg .treeView-node-line {
+line.treeView-node-line {
   stroke: $body-text-color !important;
 }
 
