@@ -16,6 +16,7 @@ stateDiagram-v2
     Moving --> Crash
     Crash --> [*]
 ```
+
 {% endhighlight %}
 
 ---
@@ -35,6 +36,7 @@ stateDiagram-v2
 
 ---
 
+{% highlight markdown %}
 
 ```mermaid
 ---
@@ -49,6 +51,7 @@ stateDiagram
     Moving --> Crash
     Crash --> [*]
 ```
+
 {% endhighlight %}
 
 ---
