@@ -71,9 +71,12 @@
 }
 
 /* TreeView diagram improvements */
-.mermaid .treeView-node-label {
+svg .treeView-node-label {
   fill: $body-text-color !important;
-  color: $body-text-color !important;
+}
+
+svg .treeView-node-line {
+  stroke: $body-text-color !important;
 }
 
 /* Title styling */
