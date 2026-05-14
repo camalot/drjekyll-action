@@ -1,4 +1,4 @@
-### Sequence diagram - [[docs](https://mermaid.js.org/syntax/sequenceDiagram.html)]
+## Sequence diagram - [[docs](https://mermaid.ai/open-source/syntax/sequenceDiagram.html)]
 
 {% highlight markdown %}
 

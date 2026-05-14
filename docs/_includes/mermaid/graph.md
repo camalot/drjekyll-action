@@ -1,4 +1,4 @@
-### Graph
+## Graph - [[docs](https://mermaid.ai/open-source/syntax/graph.html)]
 
 {% highlight markdown %}
 

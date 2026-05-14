@@ -1,4 +1,4 @@
-### Class diagram - [[docs](https://mermaid.js.org/syntax/classDiagram.html)]
+## Class - [[docs](https://mermaid.ai/open-source/syntax/classDiagram.html)]
 
 {% highlight markdown %}
 

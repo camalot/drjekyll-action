@@ -1,5 +1,5 @@
 
-### Entity Relationship Diagram - [docs](https://mermaid.ai/open-source/syntax/entityRelationshipDiagram.html)
+## Entity Relationship Diagram - [[docs](https://mermaid.ai/open-source/syntax/entityRelationshipDiagram.html)]
 
 {% highlight markdown %}
 

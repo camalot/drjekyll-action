@@ -5,11 +5,20 @@ nav_order: 1
 layout: default
 ---
 
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# Mermaid Diagrams
+{: .no_toc }
+
 [Mermaid](https://mermaid.ai/open-source/intro/) is a JavaScript-based diagramming and charting tool that allows you to create diagrams using a simple markdown-like syntax. It supports various types of diagrams, including flowcharts, sequence diagrams, class diagrams, state diagrams, and more.
 
-To use Mermaid in Dr. Jekyll, you can include your Mermaid code within a code block and specify `mermaid` as the language:
+{% include toc.md %}
 
-## Example Mermaid Diagram
+---
+
+> {: .tip }
+> To use Mermaid in Dr. Jekyll, you can include your Mermaid code within a code block and specify `mermaid` as the language. Dr. Jekyll will automatically render the Mermaid diagrams when the documentation is built.
+
+---
 
 {% include mermaid/graph.md %}
 
@@ -36,3 +45,15 @@ To use Mermaid in Dr. Jekyll, you can include your Mermaid code within a code bl
 ---
 
 {% include mermaid/entityRelationship.md %}
+
+---
+
+{% include mermaid/userJourneyDiagram.md %}
+
+---
+
+{% include mermaid/pie.md %}
+
+---
+
+{% include mermaid/quadrantChart.md %}

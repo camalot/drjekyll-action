@@ -1,5 +1,5 @@
 
-### State Diagram - [docs](https://mermaid.js.org/open-source/syntax/stateDiagram.html)
+## State Diagram - [[docs](https://mermaid.ai/open-source/syntax/stateDiagram.html)]
 
 {% highlight markdown %}
 
@@ -46,7 +46,6 @@ stateDiagram
 ```
 
 {% endhighlight %}
-
 
 ```mermaid
 stateDiagram

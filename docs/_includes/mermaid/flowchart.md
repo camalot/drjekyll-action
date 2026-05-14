@@ -1,4 +1,4 @@
-### Flowchart - [[docs](https://mermaid.js.org/syntax/flowchart.html)]
+## Flowchart - [[docs](https://mermaid.ai/open-source/syntax/flowchart.html)]
 
 {% highlight markdown %}
 
