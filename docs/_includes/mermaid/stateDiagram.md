@@ -4,9 +4,7 @@
 {% highlight markdown %}
 
 ```mermaid
----
-title: Simple sample (v2 renderer)
----
+
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
@@ -19,9 +17,6 @@ stateDiagram-v2
 
 {% endhighlight %}
 
----
-title: Simple sample (v2 renderer)
----
 
 ```mermaid
 stateDiagram-v2
@@ -39,9 +34,7 @@ stateDiagram-v2
 {% highlight markdown %}
 
 ```mermaid
----
-title: Simple sample (v1 renderer)
----
+
 stateDiagram
     [*] --> Still
     Still --> [*]
@@ -54,9 +47,6 @@ stateDiagram
 
 {% endhighlight %}
 
----
-title: Simple sample (v1 renderer)
----
 
 ```mermaid
 stateDiagram

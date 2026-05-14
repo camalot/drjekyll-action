@@ -4,9 +4,7 @@
 {% highlight markdown %}
 
 ```mermaid
----
-title: Order example
----
+
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -16,9 +14,7 @@ erDiagram
 {% endhighlight %}
 
 ```mermaid
----
-title: Order example
----
+
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -28,9 +24,7 @@ erDiagram
 {% highlight markdown %}
 
 ```mermaid
----
-title: Order example
----
+
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
@@ -53,9 +47,7 @@ erDiagram
 {% endhighlight %}
 
 ```mermaid
----
-title: Order example
----
+
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
@@ -73,3 +65,4 @@ erDiagram
         int quantity
         float pricePerUnit
     }
+```

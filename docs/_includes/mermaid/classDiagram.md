@@ -3,9 +3,7 @@
 {% highlight markdown %}
 
 ```mermaid
----
-title: Animal example
----
+
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
@@ -34,9 +32,7 @@ classDiagram
 {% endhighlight %}
 
 ```mermaid
----
-title: Animal example
----
+
 classDiagram
     note "From Duck till Zebra"
     Animal <|-- Duck
