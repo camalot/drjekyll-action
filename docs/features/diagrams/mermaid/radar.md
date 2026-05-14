@@ -1,5 +1,5 @@
 ---
-title: Radar
+title: Radar 🅱️
 parent: Mermaid Diagrams
 nav_order: 22
 layout: default

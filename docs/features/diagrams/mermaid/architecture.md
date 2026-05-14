@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Architecture
+title: Architecture 🅱️
 parent: Mermaid Diagrams
 nav_order: 21
 ---

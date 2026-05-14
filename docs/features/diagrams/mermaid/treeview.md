@@ -1,5 +1,5 @@
 ---
-title: TreeView
+title: TreeView 🅱️
 parent: Mermaid Diagrams
 nav_order: 19
 layout: default
