@@ -57,3 +57,27 @@ layout: default
 ---
 
 {% include mermaid/quadrantChart.md %}
+
+---
+
+{% include mermaid/requirementDiagram.md %}
+
+---
+
+{% include mermaid/gitGraph.md %}
+
+---
+
+{% include mermaid/mindmap.md %}
+
+---
+
+{% include mermaid/timeline.md %}
+
+---
+
+{% include mermaid/zenuml.md %}
+
+---
+
+{% include mermaid/sankey.md %}
