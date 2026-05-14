@@ -64,7 +64,7 @@ layout: default
 
 ---
 
-{% include mermaid/gitGraph.md %}
+{% include mermaid/gitgraph.md %}
 
 ---
 
