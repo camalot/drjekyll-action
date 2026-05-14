@@ -71,11 +71,11 @@
 }
 
 /* TreeView diagram improvements */
-.tree-view .treeView-node-label {
+[id^="mermaid-"] .treeView-node-label {
   fill: $body-text-color !important;
 }
 
-.tree-view .treeView-node-line {
+[id^="mermaid-"] .treeView-node-line {
   stroke: $body-text-color !important;
 }
 
