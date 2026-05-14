@@ -1,4 +1,12 @@
-## Sequence diagram - [[docs](https://mermaid.ai/open-source/syntax/sequenceDiagram.html)]
+---
+title: Sequence Diagram
+parent: Mermaid Diagrams
+nav_order: 14
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Sequence Diagram](https://mermaid.ai/open-source/syntax/sequenceDiagram.html)
 
 {% highlight markdown %}
 

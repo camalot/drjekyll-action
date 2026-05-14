@@ -1,4 +1,12 @@
-## Git Graph - [[docs](https://mermaid.ai/open-source/syntax/gitgraph.html)]
+---
+title: Git Graph
+parent: Mermaid Diagrams
+nav_order: 6
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Git Graph](https://mermaid.ai/open-source/syntax/gitgraph.html)
 
 {% highlight markdown %}
 

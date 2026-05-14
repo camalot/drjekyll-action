@@ -1,4 +1,12 @@
-## Gantt chart - [[docs](https://mermaid.ai/open-source/syntax/gantt.html)]
+---
+title: Gantt Chart
+parent: Mermaid Diagrams
+nav_order: 5
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Gantt Chart](https://mermaid.ai/open-source/syntax/gantt.html)
 
 {% highlight markdown %}
 

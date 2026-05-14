@@ -1,4 +1,12 @@
-## Requirement Diagram - [[docs](https://mermaid.ai/open-source/syntax/requirementDiagram.html)]
+---
+title: Requirement Diagram
+parent: Mermaid Diagrams
+nav_order: 12
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Requirement Diagram](https://mermaid.ai/open-source/syntax/requirementDiagram.html)
 
 {% highlight markdown %}
 

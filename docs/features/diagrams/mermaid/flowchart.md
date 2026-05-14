@@ -1,4 +1,12 @@
-## Flowchart - [[docs](https://mermaid.ai/open-source/syntax/flowchart.html)]
+---
+title: Flowchart
+parent: Mermaid Diagrams
+nav_order: 4
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Flowchart](https://mermaid.ai/open-source/syntax/flowchart.html)
 
 {% highlight markdown %}
 

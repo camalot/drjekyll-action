@@ -1,4 +1,12 @@
-## Mind Map - [[docs](https://mermaid.ai/open-source/syntax/mindmap.html)]
+---
+title: Mind Map
+parent: Mermaid Diagrams
+nav_order: 8
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Mind Map](https://mermaid.ai/open-source/syntax/mindmap.html)
 
 {% highlight markdown %}
 

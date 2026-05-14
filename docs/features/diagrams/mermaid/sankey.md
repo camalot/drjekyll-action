@@ -1,4 +1,12 @@
-## Sankey - [[docs](https://mermaid.ai/open-source/syntax/sankey.html)]
+---
+title: Sankey
+parent: Mermaid Diagrams
+nav_order: 13
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Sankey](https://mermaid.ai/open-source/syntax/sankey.html)
 
 {% highlight markdown %}
 

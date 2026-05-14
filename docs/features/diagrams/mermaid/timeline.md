@@ -1,4 +1,12 @@
-## Timeline - [[docs](https://mermaid.ai/open-source/syntax/timeline.html)]
+---
+title: Timeline
+parent: Mermaid Diagrams
+nav_order: 16
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Timeline](https://mermaid.ai/open-source/syntax/timeline.html)
 
 {% highlight markdown %}
 

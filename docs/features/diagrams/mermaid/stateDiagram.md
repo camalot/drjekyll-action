@@ -1,5 +1,12 @@
+---
+title: State Diagram
+parent: Mermaid Diagrams
+nav_order: 15
+layout: default
+---
 
-## State Diagram - [[docs](https://mermaid.ai/open-source/syntax/stateDiagram.html)]
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [State Diagram](https://mermaid.ai/open-source/syntax/stateDiagram.html)
 
 {% highlight markdown %}
 
@@ -16,7 +23,6 @@ stateDiagram-v2
 ```
 
 {% endhighlight %}
-
 
 ```mermaid
 stateDiagram-v2

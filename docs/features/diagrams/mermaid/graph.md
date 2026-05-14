@@ -1,4 +1,12 @@
-## Graph - [[docs](https://mermaid.ai/open-source/syntax/graph.html)]
+---
+title: Graph
+parent: Mermaid Diagrams
+nav_order: 7
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Graph](https://mermaid.ai/open-source/syntax/graph.html)
 
 {% highlight markdown %}
 

@@ -1,4 +1,12 @@
-## User Journey Diagram - [[docs](https://mermaid.ai/open-source/syntax/userJourneyDiagram.html)]
+---
+title: User Journey Diagram
+parent: Mermaid Diagrams
+nav_order: 17
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [User Journey Diagram](https://mermaid.ai/open-source/syntax/userJourneyDiagram.html)
 
 {% highlight markdown %}
 

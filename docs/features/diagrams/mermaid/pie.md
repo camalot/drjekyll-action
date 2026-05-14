@@ -1,6 +1,12 @@
+---
+title: Pie
+parent: Mermaid Diagrams
+nav_order: 10
+layout: default
+---
 
-
-## Pie Chart - [[docs](https://mermaid.js.org/syntax/pie.html)]
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Pie Chart](https://mermaid.js.org/syntax/pie.html)
 
 {% highlight markdown %}
 

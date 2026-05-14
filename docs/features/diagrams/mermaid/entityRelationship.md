@@ -1,5 +1,12 @@
+---
+title: Entity Relationship
+parent: Mermaid Diagrams
+nav_order: 3
+layout: default
+---
 
-## Entity Relationship Diagram - [[docs](https://mermaid.ai/open-source/syntax/entityRelationshipDiagram.html)]
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Entity Relationship Diagram](https://mermaid.ai/open-source/syntax/entityRelationshipDiagram.html)
 
 {% highlight markdown %}
 

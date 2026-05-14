@@ -1,4 +1,12 @@
-## Class - [[docs](https://mermaid.ai/open-source/syntax/classDiagram.html)]
+---
+title: Class
+parent: Mermaid Diagrams
+nav_order: 2
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Class](https://mermaid.ai/open-source/syntax/classDiagram.html)
 
 {% highlight markdown %}
 

@@ -1,4 +1,12 @@
-## Quadrant Chart - [[docs](https://mermaid.ai/open-source/syntax/quadrantChart.html)]
+---
+title: Quadrant Chart
+parent: Mermaid Diagrams
+nav_order: 11
+layout: default
+---
+
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Quadrant Chart](https://mermaid.ai/open-source/syntax/quadrantChart.html)
 
 {% highlight markdown %}
 
