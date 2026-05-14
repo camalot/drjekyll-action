@@ -70,6 +70,12 @@
   min-width: 80px;
 }
 
+/* TreeView diagram improvements */
+.mermaid .treeView-node-label {
+  fill: $body-text-color !important;
+  color: $body-text-color !important;
+}
+
 /* Title styling */
 .mermaid .title {
   font-size: 18px;

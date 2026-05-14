@@ -5,11 +5,11 @@ nav_order: 26
 layout: default
 ---
 
-# [Ishikawa](https://mermaid.ai/open-source/syntax/ishikawa.html) --- IGNORE ---
+<!-- markdownlint-disable-next-line MD025 MD022 -->
+# [Ishikawa](https://mermaid.ai/open-source/syntax/ishikawa.html)
 
 {: .warning }
 This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
-
 
 {% highlight markdown %}
 
