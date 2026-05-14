@@ -5,7 +5,7 @@
 
 ```mermaid
 ---
-title: Simple sample
+title: Simple sample (v2 renderer)
 ---
 stateDiagram-v2
     [*] --> Still
@@ -20,7 +20,7 @@ stateDiagram-v2
 {% endhighlight %}
 
 ---
-title: Simple sample
+title: Simple sample (v2 renderer)
 ---
 
 ```mermaid
@@ -40,7 +40,7 @@ stateDiagram-v2
 
 ```mermaid
 ---
-title: Simple sample
+title: Simple sample (v1 renderer)
 ---
 stateDiagram
     [*] --> Still
@@ -55,7 +55,7 @@ stateDiagram
 {% endhighlight %}
 
 ---
-title: Simple sample
+title: Simple sample (v1 renderer)
 ---
 
 ```mermaid
