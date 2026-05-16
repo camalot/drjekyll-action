@@ -1,4 +1,6 @@
-  (function () {
+---
+---
+(function () {
     'use strict';
 
     var storageKey = 'workspace-tasks-docs-theme';
