@@ -20,6 +20,7 @@ plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
   - rouge
+  - jekyll-gfm-admonitions
 
 highlighter: rouge
 destination: "{{ input.output_dir }}"
