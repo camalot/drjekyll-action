@@ -287,7 +287,7 @@ All partials live directly in `drjekyll/assets/css/` (no subdirectory). The SCSS
 **Modify:** `drjekyll/assets/css/_theme.scss` — add import at the end:
 
 ```scss
-@import 'frontmatter-table';
+@use 'frontmatter-table';
 ```
 
 ### Step 3 — Documentation Page
@@ -317,7 +317,7 @@ Add an entry for the Frontmatter Table feature.
 |---|---|---|
 | `drjekyll/_plugins/frontmatter_table.rb` | CREATE | Core plugin logic |
 | `drjekyll/assets/css/_frontmatter-table.scss` | CREATE | Table styles using theme SCSS variables |
-| `drjekyll/assets/css/_theme.scss` | MODIFY | Add `@import 'frontmatter-table'` |
+| `drjekyll/assets/css/_theme.scss` | MODIFY | Add `@use 'frontmatter-table'` |
 | `docs/features/frontmatter-table.md` | CREATE | Feature documentation |
 | `docs/features/index.md` | MODIFY | Add feature to index |
 

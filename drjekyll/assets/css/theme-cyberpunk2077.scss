@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/cyberpunk2077';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/cyberpunk2077';
+@use 'theme-vars';
+@use 'theme';

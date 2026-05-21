@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/harper';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/harper';
+@use 'theme-vars';
+@use 'theme';

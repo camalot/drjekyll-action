@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/horizon-bright';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/horizon-bright';
+@use 'theme-vars';
+@use 'theme';

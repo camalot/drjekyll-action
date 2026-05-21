@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/horizon-dark';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/horizon-dark';
+@use 'theme-vars';
+@use 'theme';

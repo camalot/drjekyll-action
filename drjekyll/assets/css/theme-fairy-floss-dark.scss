@@ -1,7 +1,3 @@
----
----
-
-@import 'color_schemes/fairy-floss-dark';
-@import 'theme-vars';
-@import 'theme';
-
+@use 'color_schemes/fairy-floss-dark';
+@use 'theme-vars';
+@use 'theme';

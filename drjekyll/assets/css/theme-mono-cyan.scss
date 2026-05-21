@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/mono-cyan';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/mono-cyan';
+@use 'theme-vars';
+@use 'theme';

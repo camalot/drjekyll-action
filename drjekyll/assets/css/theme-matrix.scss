@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/matrix';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/matrix';
+@use 'theme-vars';
+@use 'theme';

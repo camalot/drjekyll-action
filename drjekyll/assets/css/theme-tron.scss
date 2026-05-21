@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/tron';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/tron';
+@use 'theme-vars';
+@use 'theme';

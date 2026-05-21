@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/ubuntu';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/ubuntu';
+@use 'theme-vars';
+@use 'theme';

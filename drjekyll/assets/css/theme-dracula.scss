@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/dracula';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/dracula';
+@use 'theme-vars';
+@use 'theme';

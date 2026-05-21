@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/gogh';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/gogh';
+@use 'theme-vars';
+@use 'theme';

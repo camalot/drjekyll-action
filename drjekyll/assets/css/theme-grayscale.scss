@@ -1,9 +1,6 @@
----
----
-
-@import 'color_schemes/grayscale';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/grayscale';
+@use 'theme-vars';
+@use 'theme';
 
 // a,
 // a:link,

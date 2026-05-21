@@ -1,6 +1,3 @@
----
----
-
-@import 'color_schemes/mono-yellow';
-@import 'theme-vars';
-@import 'theme';
+@use 'color_schemes/mono-yellow';
+@use 'theme-vars';
+@use 'theme';
