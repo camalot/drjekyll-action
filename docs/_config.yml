@@ -9,3 +9,5 @@ logo: /assets/images/icon.svg
 aux_links:
   "GitHub":
     - "https://github.com/camalot/drjekyll-action"
+
+aux_links_new_tab: true
