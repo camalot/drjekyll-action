@@ -145,7 +145,7 @@ module Rouge
         rule %r{\{%-?}, Punctuation,        :tera_statement
         rule %r{\{\{-?}, Punctuation,       :tera_expression
         rule %r{\\.}, Str::Escape
-        rule %r{[^{"\\]+|\{(?![{%#])}, Str
+        rule %r([^{"\\]+|\{(?![{%#])), Str
         rule %r{"}, Str
       end
 
