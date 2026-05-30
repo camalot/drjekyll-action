@@ -9,7 +9,7 @@ layout: default
 # 🧱 Tera Templates
 {: .no_toc }
 
-[Tera](https://keats.github.io/tera/) is a template engine for Rust, inspired by Jinja2 and Django templates. Dr. Jekyll includes a custom Rouge lexer that highlights Tera's expression blocks (`{{ }}`), statement tags (`{% %}`), and comment blocks (`{# #}`), while treating surrounding content as plain text.
+[Tera](https://keats.github.io/tera/) is a template engine for Rust, inspired by Jinja2 and Django templates. Dr. Jekyll includes a custom Rouge lexer that highlights Tera's expression blocks (`{% raw %}{{ }}{% endraw %}`), statement tags (`{% raw %}{% %}{% endraw %}`), and comment blocks (`{% raw %}{# #}{% endraw %}`), while treating surrounding content as plain text.
 
 > {: .note }
 > Tera syntax is also highlighted automatically inside triple-quoted (`"""`) values in [Cliff TOML](cliff.md) files.
@@ -52,10 +52,12 @@ Expression blocks evaluate a variable or expression and output the result. Use `
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {{ user.name }}
 {{ version | trim_start_matches(pat="v") }}
 {{- timestamp | date(format="%Y-%m-%d") -}}
 {{ "<REMOTE_URL>/" ~ remote.github.owner ~ "/" ~ remote.github.repo -}}
+{% endraw %}
 ```
 
 The `~` operator concatenates strings.
@@ -64,7 +66,7 @@ The `~` operator concatenates strings.
 
 ## Statement Tags
 
-Statement tags control template logic. Use `{%` and `%}` as delimiters:
+Statement tags control template logic. Use `{% raw %}{%{% endraw %}` and `{% raw %}%}{% endraw %}` as delimiters:
 
 ### Conditionals
 
@@ -85,6 +87,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {% if user.is_admin %}
   <p>Welcome, admin.</p>
 {% elif user.is_logged_in %}
@@ -92,6 +95,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% else %}
   <p>Please log in.</p>
 {% endif %}
+{% endraw %}
 ```
 
 ### Loops
@@ -109,9 +113,11 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {% for commit in commits %}
 - {{ commit.message | upper_first }}
 {% endfor %}
+{% endraw %}
 ```
 
 ### Variable Assignment
@@ -130,10 +136,12 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {% set greeting = "Hello, " ~ user.name ~ "!" %}
 {{ greeting }}
 
 {% set_global counter = 0 %}
+{% endraw %}
 ```
 
 ### Template Inheritance
@@ -154,12 +162,14 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {% extends "base.html" %}
 
 {% block content %}
   <h1>{{ page.title }}</h1>
   {{ super() }}
 {% endblock content %}
+{% endraw %}
 ```
 
 ---
@@ -180,8 +190,10 @@ Comment blocks are not rendered in the output. Use `{#` and `#}` as delimiters:
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {# This is a comment and will not appear in the rendered output #}
 {#- Whitespace-stripping comment -#}
+{% endraw %}
 ```
 
 ---
@@ -207,6 +219,7 @@ Filters transform a value using the pipe `|` operator. Chaining is supported:
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {{ commits | group_by(attribute="group") }}
 {{ message | striptags | trim | upper_first }}
 {{ body | truncate(length=200) }}
@@ -214,10 +227,11 @@ Filters transform a value using the pipe `|` operator. Chaining is supported:
 {{ count | round(method="ceil", precision=2) }}
 {{ r.contributors | filter(attribute="is_first_time", value=true) }}
 {{ input | trim_start_matches(pat='"') | trim_end_matches(pat='"') }}
+{% endraw %}
 ```
 
 > {: .note }
-> `filter` is also a block-level statement tag (`{% filter lower %}...{% endfilter %}`). When used after a pipe `|` it acts as a collection filter; the lexer highlights it as a control keyword in both cases.
+> `filter` is also a block-level statement tag (`{% raw %}{% filter lower %}...{% endfilter %}{% endraw %}`). When used after a pipe `|` it acts as a collection filter; the lexer highlights it as a control keyword in both cases.
 
 ---
 
@@ -245,6 +259,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {%- macro user_url(name) -%}
   [@{{ name | lower }}](https://github.com/{{ name | lower }})
 {%- endmacro -%}
@@ -255,6 +270,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 
 {{ self::user_url(name=commit.remote.username) }}
 {{ self::plural(count=s_commit_count, singular="commit", plural="commits") }}
+{% endraw %}
 ```
 
 ---
@@ -277,12 +293,14 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {% set nums = range(end=5) %}
 {% set ts = now(timestamp=true) %}
 
 {% if value is defined %}{{ value }}{% endif %}
 {% if count is odd %}odd{% endif %}
 {% if name is starting_with("v") %}versioned{% endif %}
+{% endraw %}
 ```
 
 ---
@@ -316,6 +334,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 {% endhighlight %}
 
 ```tera
+{% raw %}
 {# Changelog body template for git-cliff #}
 {% if version %}
 ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
@@ -333,6 +352,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
   [{{ commit.id | truncate(length=7, end="") }}]({{ commit.remote.link }})
 {% endfor %}
 {% endfor %}
+{% endraw %}
 ```
 
 ---

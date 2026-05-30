@@ -50,8 +50,10 @@ You can also use `liquid` for syntax highlighting in Jekyll templates:
 This will render as:
 
 ```liquid
+{% raw %}
 {% assign name = "Dr. Jekyll" %}
 Hello, {{ name }}!
+{% endraw %}
 ```
 
 ---
