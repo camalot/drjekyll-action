@@ -95,6 +95,7 @@ ignore_tags = ""
 Any triple-quoted string value (`"""..."""`) is treated as an embedded [Tera](tera.md) template. Keywords, filters, variables, and delimiters are all highlighted within the template body:
 
 {% highlight markdown %}
+{% raw %}
 
 ```cliff
 [changelog]
@@ -114,6 +115,7 @@ body = """
 """
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```cliff
@@ -215,6 +217,7 @@ link_parsers = [
 ## Full Example
 
 {% highlight markdown %}
+{% raw %}
 
 ```cliff
 # git-cliff configuration
@@ -281,6 +284,7 @@ link_parsers = [
 ]
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```cliff
