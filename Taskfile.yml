@@ -15,3 +15,12 @@ tasks:
     cmds:
       - bash ./entrypoint.sh
     silent: true
+
+  ruby:syntax:
+    desc: check ruby syntax
+    cmds:
+      - cmd: |
+          for file in /workspace/drjekyll/_plugins/*.rb; do
+            CHECK_RUBY_SYNTAX="$(ruby -c "$file")"
+            echo "$file -> $CHECK_RUBY_SYNTAX"
+          done

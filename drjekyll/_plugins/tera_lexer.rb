@@ -47,7 +47,7 @@ module Rouge
         rule %r{\{#-?}, Comment::Multiline, :tera_comment
         rule %r{\{%-?}, Punctuation, :tera_statement
         rule %r{\{\{-?}, Punctuation, :tera_expression
-        rule %r{[^{]+|\{(?![{%#])}, Text
+        rule %r([^{]+|\{(?![{%#])), Text
       end
 
       state :tera_comment do
