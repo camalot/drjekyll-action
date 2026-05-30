@@ -23,11 +23,13 @@ layout: default
 Use the `tera` language tag on a fenced code block:
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {{ page.title }}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ---
@@ -37,6 +39,7 @@ Use the `tera` language tag on a fenced code block:
 Expression blocks evaluate a variable or expression and output the result. Use `{{` and `}}` as delimiters; the whitespace-stripping variants `{{-` and `-}}` trim surrounding whitespace:
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {{ user.name }}
@@ -45,6 +48,7 @@ Expression blocks evaluate a variable or expression and output the result. Use `
 {{ "<REMOTE_URL>/" ~ remote.github.owner ~ "/" ~ remote.github.repo -}}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -65,6 +69,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 ### Conditionals
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {% if user.is_admin %}
@@ -76,6 +81,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% endif %}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -91,6 +97,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 ### Loops
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {% for commit in commits %}
@@ -98,6 +105,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% endfor %}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -109,6 +117,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 ### Variable Assignment
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {% set greeting = "Hello, " ~ user.name ~ "!" %}
@@ -117,6 +126,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% set_global counter = 0 %}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -129,6 +139,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 ### Template Inheritance
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {% extends "base.html" %}
@@ -139,6 +150,7 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 {% endblock content %}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -157,12 +169,14 @@ Statement tags control template logic. Use `{%` and `%}` as delimiters:
 Comment blocks are not rendered in the output. Use `{#` and `#}` as delimiters:
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {# This is a comment and will not appear in the rendered output #}
 {#- Whitespace-stripping comment -#}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -177,6 +191,7 @@ Comment blocks are not rendered in the output. Use `{#` and `#}` as delimiters:
 Filters transform a value using the pipe `|` operator. Chaining is supported:
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {{ commits | group_by(attribute="group") }}
@@ -188,6 +203,7 @@ Filters transform a value using the pipe `|` operator. Chaining is supported:
 {{ input | trim_start_matches(pat='"') | trim_end_matches(pat='"') }}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -210,6 +226,7 @@ Filters transform a value using the pipe `|` operator. Chaining is supported:
 Macros are reusable template fragments. `self::macro_name()` calls a macro defined in the same template:
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {%- macro user_url(name) -%}
@@ -224,6 +241,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 {{ self::plural(count=s_commit_count, singular="commit", plural="commits") }}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -244,6 +262,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 ## Built-in Functions and Tests
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {% set nums = range(end=5) %}
@@ -254,6 +273,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 {% if name is starting_with("v") %}versioned{% endif %}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
@@ -270,6 +290,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 ## Full Example
 
 {% highlight markdown %}
+{% raw %}
 
 ```tera
 {# Changelog body template for git-cliff #}
@@ -291,6 +312,7 @@ Macros are reusable template fragments. `self::macro_name()` calls a macro defin
 {% endfor %}
 ```
 
+{% endraw %}
 {% endhighlight %}
 
 ```tera
