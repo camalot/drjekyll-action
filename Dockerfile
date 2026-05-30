@@ -5,7 +5,7 @@ FROM ruby:3-slim-trixie
 
 # Native gems (e.g., bigdecimal) require a compiler toolchain on slim images.
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends curl jq build-essential rsync \
+	&& apt-get install -y --no-install-recommends curl jq build-essential rsync openssl \
 	&& rm -rf /var/lib/apt/lists/* \
   && YQ_VERSION=$(curl -s "https://api.github.com/repos/mikefarah/yq/releases/latest" | jq -r ".tag_name" | sed 's/v//') \
   && curl -X GET -Ls "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64" -o /usr/bin/yq \
