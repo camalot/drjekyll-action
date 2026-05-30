@@ -63,3 +63,5 @@ Dr. Jekyll's extended language support includes:
 - [PlantUML Diagrams](plantuml.md) -->
 - [YAML Front Matter](frontmatter/index.md)
 - [Tree View](treeview.md)
+- [Cliff TOML](cliff.md)
+- [Tera Templates](tera.md)

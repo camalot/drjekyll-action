@@ -30,9 +30,10 @@ RUN rm -f /etc/apt/sources.list.d/yarn.list \
 RUN apt-get update \
   && apt-get install -y --no-install-recommends apt-utils xauth apt-transport-https 2>&1 \
   && apt-get install -y --no-install-recommends git iproute2 procps lsb-release sudo gnupg 2>&1 \
-  && apt-get install -y --no-install-recommends curl wget zip unzip dnsutils jq bat fzf zoxide 2>&1 \
-  && apt-get install -y --no-install-recommends nano vim zsh ripgrep cmake imagemagick 2>&1 \
-  && apt-get install -y --no-install-recommends python3-full python3-pip python3-venv 2>&1 \
+  && apt-get install -y --no-install-recommends curl wget zip unzip dnsutils jq bat fzf zoxide direnv 2>&1 \
+  && apt-get install -y --no-install-recommends nano vim zsh ripgrep cmake imagemagick eza 2>&1 \
+  && apt-get install -y --no-install-recommends python3-full python3-pip python3-venv golang-go python3-virtualenv 2>&1 \
+  && pip3 install --no-cache-dir --break-system-packages Pygments 2>&1 \
   && apt-get install -y --no-install-recommends \
     xvfb libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
     libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 \
@@ -107,23 +108,10 @@ RUN PWSH_TAG=$(curl -s "https://api.github.com/repos/PowerShell/PowerShell/relea
   && curl -fsSL https://mise.run | MISE_INSTALL_PATH=/usr/local/bin/mise sh \
   && curl -fsSL https://claude.ai/install.sh | bash
 
-# Install dotnet - used for supporting Cake build scripts
-RUN curl -fsSL https://packages.microsoft.com/config/debian/13/packages-microsoft-prod.deb -o /tmp/packages-microsoft-prod.deb \
-  && dpkg -i /tmp/packages-microsoft-prod.deb \
-  && rm /tmp/packages-microsoft-prod.deb \
-  && apt-get update \
-  && apt-get install -y dotnet-sdk-10.0 \
-  && apt-get clean -y \
-  && rm -rf /var/lib/apt/lists/* \
-  && dotnet tool install Cake.Tool --version 6.1.0
-
-
 # install task (https://taskfile.dev/), a modern alternative to Make written in Go
-# install gitlab-ci-local (https://gitlab-ci-local.dev/), a tool to run GitLab CI pipelines locally
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' | bash - && \
-  curl -fsSL "https://gitlab-ci-local-ppa.firecow.dk/gitlab-ci-local.sources" -o "/etc/apt/sources.list.d/gitlab-ci-local.sources" \
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' | bash - \
   && apt-get update \
-  && apt-get install -y gitlab-ci-local task \
+  && apt-get install -y task \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/* \
   && curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/main/install.sh | bash
@@ -143,20 +131,31 @@ RUN if [ ! -e /usr/bin/python ]; then ln -s /usr/bin/python3 /usr/bin/python; fi
 
 USER ${USERNAME}
 
+COPY --chown=${USERNAME}:${USERNAME} files/home/vscode/ /home/${USERNAME}/
+
+RUN mkdir -p "/home/${USERNAME}/.antigen" "/home/${USERNAME}/.zsh/custom/aliases" "/home/${USERNAME}/.devcontainer" "/home/${USERNAME}/bin" "/home/${USERNAME}/.act" \
+  && curl -fsSL https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh > "/home/${USERNAME}/.antigen.zsh" \
+  && ZSH_CUSTOM="/home/${USERNAME}/.oh-my-zsh/custom" \
+  && mkdir -p "$ZSH_CUSTOM/themes" "/home/${USERNAME}/.antigen/bundles/romkatv" \
+  && git clone --depth=1 'https://github.com/romkatv/powerlevel10k.git' "/home/${USERNAME}/.antigen/bundles/romkatv/powerlevel10k" \
+  && ln -s "/home/${USERNAME}/.antigen/bundles/romkatv/powerlevel10k" "$ZSH_CUSTOM/themes/powerlevel10k" \
+  && chown -R ${USERNAME}:${USERNAME} "/home/${USERNAME}/.oh-my-zsh" \
+  && ACT_VERSION=$(curl -s "https://api.github.com/repos/nektos/act/releases/latest" | jq -r ".tag_name") \
+  && curl -fsSL "https://github.com/nektos/act/releases/download/${ACT_VERSION}/act_Linux_x86_64.tar.gz" | tar -xz -C "/home/${USERNAME}/bin" \
+  && chmod +x "/home/${USERNAME}/bin/act" \
+  && ln -s "/home/${USERNAME}/bin/act" "/home/${USERNAME}/.act/act" \
+  && curl -sSL https://install.python-poetry.org | python3 -
+
+RUN export PATH="$HOME/.local/bin:$HOME/.local/share/pnpm/bin:$PATH" \
+  && pnpm self-update
+
+
 # install user tools
 # hadolint ignore=DL3013
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
-  && ACT_VERSION=$(curl -s "https://api.github.com/repos/nektos/act/releases/latest" | jq -r ".tag_name") \
-  && curl -fsSL "https://github.com/nektos/act/releases/download/${ACT_VERSION}/act_Linux_x86_64.tar.gz" | tar -xz -C "/home/${USERNAME}/bin" \
   && curl -fsSL "https://uploader.codecov.io/latest/linux/codecov" -o "/home/${USERNAME}/bin/codecov" \
   && chmod +x "/home/${USERNAME}/bin/codecov" \
   && pip install --no-cache-dir --user pipx --break-system-packages && /home/${USERNAME}/.local/bin/pipx ensurepath && /home/${USERNAME}/.local/bin/pipx install bitbucket-pipeline-runner rust-just
-
-COPY files/home/vscode/ /home/${USERNAME}/
-
-RUN git clone --depth=1 'https://github.com/romkatv/powerlevel10k.git' "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" \
-  && mkdir -p "/home/${USERNAME}/.antigen" "/home/${USERNAME}/.zsh/custom/aliases" "/home/${USERNAME}/.devcontainer" "/home/${USERNAME}/bin" \
-  && curl -fsSL https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh > "/home/${USERNAME}/.antigen/antigen.zsh"
 
 # Reset SHELL to prevent pipefail from breaking devcontainer features installation
 SHELL ["/bin/sh", "-c"]

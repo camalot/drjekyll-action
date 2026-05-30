@@ -89,6 +89,7 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 autoload -Uz compinit && compinit
 antigen apply
 # zsh-syntax-highlighting styles
+typeset -A ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES+=(
   [command]='fg=green,bold'
   [builtin]='fg=green,bold'
@@ -172,6 +173,11 @@ fi
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ ":$PATH:" != *":$HOME/bin:"* ]] && export PATH="$HOME/bin:$PATH"
 # END ANSIBLE MANAGED — paths
+
+if command -v pnpm >/dev/null 2>&1; then
+  export PNPM_HOME="$HOME/.local/share/pnpm"
+  [[ ":$PATH:" != *":$PNPM_HOME:"* ]] && export PATH="$PNPM_HOME:$PATH"
+fi
 
 if [[ -d "$HOME/.cargo/bin" ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]]; then
   export PATH="$HOME/.cargo/bin:$PATH"
