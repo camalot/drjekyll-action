@@ -119,6 +119,7 @@ body = """
 {% endhighlight %}
 
 ```cliff
+{% raw %}
 [changelog]
 body = """
 {% if version %}
@@ -134,6 +135,7 @@ body = """
 {% endfor %}
 {% endfor %}
 """
+{% endraw %}
 ```
 
 ---
@@ -288,6 +290,7 @@ link_parsers = [
 {% endhighlight %}
 
 ```cliff
+{% raw %}
 # git-cliff configuration
 
 [remote.github]
@@ -350,6 +353,7 @@ commit_preprocessors = [
 link_parsers = [
   { pattern = '#(\d+)', text = '!#!$1', href = "<REPO>/issues/$1" },
 ]
+{% endraw %}
 ```
 
 ---
