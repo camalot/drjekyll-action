@@ -443,6 +443,48 @@ function replace_template_vars() {
   group_end
 }
 
+function prepare_user_config() {
+  # The user config is loaded LAST in the Jekyll config chain so that user
+  # settings (logo, aux_links, color_scheme, ...) win over DrJekyll defaults.
+  # This strips the keys DrJekyll owns and unions the list-valued keys that
+  # Jekyll would otherwise replace wholesale.
+  local active_dir="$1"
+  local user_config="$active_dir/_config.yml"
+  local drjekyll_config="$active_dir/_config-drjekyll.yml"
+
+  group_start "Prepare user config"
+
+  if [ ! -f "$user_config" ]; then
+    log_warn "No user config at '$user_config'; nothing to prepare."
+    group_end
+    return
+  fi
+
+  local reserved_keys=(remote_theme destination url baseurl source)
+  for key in "${reserved_keys[@]}"; do
+    log_info "Removing DrJekyll-owned key '$key' from user config if present..."
+    if ! yq eval "del(.$key)" -i "$user_config"; then
+      log_error "yq delete of '$key' failed with exit code $?"
+      group_end
+      exit 1
+    fi
+  done
+
+  local union_keys=(plugins exclude)
+  for key in "${union_keys[@]}"; do
+    log_info "Unioning '$key' from DrJekyll config into user config..."
+    if ! yq eval ".$key = (((load(\"$drjekyll_config\") | .$key) // []) + (.$key // []) | unique)" -i "$user_config"; then
+      log_error "yq union of '$key' failed with exit code $?"
+      group_end
+      exit 1
+    fi
+  done
+
+  log_info "Prepared user config:"
+  cat "$user_config" | sed 's/^/  /'
+  group_end
+}
+
 function build_docs() {
   group_start "Build docs"
   # Check if the output directory exists, if it does, remove it
@@ -510,24 +552,18 @@ function build_docs() {
     exit 1
   fi
 
-  # Remove remote_theme from user config if present; DrJekyll's theme is authoritative
-  log_info "Removing remote_theme from user config if present..."
-  if ! yq eval 'del(.remote_theme)' -i "$DRJEKYLL_DOCS_DIR/_config.yml"; then
-    log_error "yq delete of remote_theme failed with exit code $?"
-    group_end
-    exit 1
-  fi
+  prepare_user_config "$DRJEKYLL_DOCS_DIR"
 
   # Build the Jekyll site into the temp directory.
   log_info "Building Jekyll site from '$DRJEKYLL_DOCS_DIR' to '$BUILD_TMP_DIR'..."
   log_info "Final output will be copied to: $OUTPUT_DIR"
-  log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"
+  log_info "Jekyll config chain: $DRJEKYLL_DOCS_DIR/_config-drjekyll.yml,$DRJEKYLL_DOCS_DIR/_config.yml"
   log_info "BUNDLE_GEMFILE: $BUNDLE_GEMFILE"
   log_info "BUNDLE_PATH: $BUNDLE_PATH"
   if ! bundle exec jekyll build \
     --source "$DRJEKYLL_DOCS_DIR" \
     --destination "$BUILD_TMP_DIR" \
-    --config "$DRJEKYLL_DOCS_DIR/_config.yml,$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    --config "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml,$DRJEKYLL_DOCS_DIR/_config.yml"; then
     log_error "Jekyll build failed."
     rm -rf "$BUILD_TMP_DIR"
     group_end
@@ -661,16 +697,10 @@ function serve_docs() {
     exit 1
   fi
 
-  # Remove remote_theme from user config if present; DrJekyll's theme is authoritative
-  log_info "Removing remote_theme from user config if present..."
-  if ! yq eval 'del(.remote_theme)' -i "$DRJEKYLL_WORK_DIR/_config.yml"; then
-    log_error "yq delete of remote_theme failed with exit code $?"
-    group_end
-    exit 1
-  fi
+  prepare_user_config "$DRJEKYLL_WORK_DIR"
 
-  # Build the config chain: user config, drjekyll base config, then local overrides if present.
-  local SERVE_CONFIG="$DRJEKYLL_WORK_DIR/_config.yml,$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"
+  # Build the config chain: drjekyll base config, user config, then local overrides if present.
+  local SERVE_CONFIG="$DRJEKYLL_WORK_DIR/_config-drjekyll.yml,$DRJEKYLL_WORK_DIR/_config.yml"
   if [ -f "$DRJEKYLL_WORK_DIR/_config-drjekyll-local.yml" ]; then
     SERVE_CONFIG="$SERVE_CONFIG,$DRJEKYLL_WORK_DIR/_config-drjekyll-local.yml"
     log_info "Local config override found: $DRJEKYLL_WORK_DIR/_config-drjekyll-local.yml"
