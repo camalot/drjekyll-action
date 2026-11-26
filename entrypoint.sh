@@ -239,8 +239,11 @@ function setup_gems() {
 
   group_start "Bundle install"
   log_info "Installing gems with Gemfile '$USER_GEMFILE' into '$target_dir/vendor/bundle'..."
-  if ! BUNDLE_GEMFILE="$USER_GEMFILE" BUNDLE_PATH="$target_dir/vendor/bundle" bundle install; then
-    log_error "Bundle install failed with exit code $?"
+  if BUNDLE_GEMFILE="$USER_GEMFILE" BUNDLE_PATH="$target_dir/vendor/bundle" bundle install; then
+    :
+  else
+    command_status=$?
+    log_error "Bundle install failed with exit code $command_status"
     group_end
     exit 1
   fi
@@ -295,8 +298,11 @@ function setup_drjekyll() {
   log_info "Merging input directory '$INPUT_DIR' with Dr. Jekyll docs directory '$DRJEKYLL_DOCS_DIR'..."
   # need to ignore Gemfile, Gemfile.lock, and _config-drjekyll.yml, as well as the _includes/footer_custom.html and _includes/head_custom.html files, as they are handled separately
   group_start "Rsync merge details"
-  if ! rsync -avL --ignore-times --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/head_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
-    log_error "rsync merge failed with exit code $?"
+  if rsync -avL --ignore-times --exclude='Gemfile' --exclude='Gemfile.lock' --exclude='_config-drjekyll.yml' --exclude='_includes/footer_custom.html' --exclude='_includes/head_custom.html' "$INPUT_DIR/" "$DRJEKYLL_DOCS_DIR/"; then
+    :
+  else
+    command_status=$?
+    log_error "rsync merge failed with exit code $command_status"
     group_end
     group_end
     exit 1
@@ -463,8 +469,11 @@ function prepare_user_config() {
   local reserved_keys=(remote_theme destination url baseurl source)
   for key in "${reserved_keys[@]}"; do
     log_info "Removing DrJekyll-owned key '$key' from user config if present..."
-    if ! yq eval "del(.$key)" -i "$user_config"; then
-      log_error "yq delete of '$key' failed with exit code $?"
+    if yq eval "del(.$key)" -i "$user_config"; then
+      :
+    else
+      command_status=$?
+      log_error "yq delete of '$key' failed with exit code $command_status"
       group_end
       exit 1
     fi
@@ -473,8 +482,11 @@ function prepare_user_config() {
   local union_keys=(plugins exclude)
   for key in "${union_keys[@]}"; do
     log_info "Unioning '$key' from DrJekyll config into user config..."
-    if ! yq eval ".$key = (((load(\"$drjekyll_config\") | .$key) // []) + (.$key // []) | unique)" -i "$user_config"; then
-      log_error "yq union of '$key' failed with exit code $?"
+    if yq eval ".$key = (((load(\"$drjekyll_config\") | .$key) // []) + (.$key // []) | unique)" -i "$user_config"; then
+      :
+    else
+      command_status=$?
+      log_error "yq union of '$key' failed with exit code $command_status"
       group_end
       exit 1
     fi
@@ -523,22 +535,31 @@ function build_docs() {
 
   # Update destination, url, and baseurl in _config-drjekyll.yml with runtime values.
   log_info "Setting destination in _config-drjekyll.yml to '$BUILD_TMP_DIR' using yq..."
-  if ! yq eval ".destination = \"$BUILD_TMP_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
-    log_error "yq update of destination failed with exit code $?"
+  if yq eval ".destination = \"$BUILD_TMP_DIR\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq update of destination failed with exit code $command_status"
     group_end
     exit 1
   fi
 
   log_info "Setting url in _config-drjekyll.yml to '$INPUT_URL' using yq..."
-  if ! yq eval ".url = \"$INPUT_URL\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
-    log_error "yq update of url failed with exit code $?"
+  if yq eval ".url = \"$INPUT_URL\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq update of url failed with exit code $command_status"
     group_end
     exit 1
   fi
 
   log_info "Setting baseurl in _config-drjekyll.yml to '$INPUT_BASEURL' using yq..."
-  if ! yq eval ".baseurl = \"$INPUT_BASEURL\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
-    log_error "yq update of baseurl failed with exit code $?"
+  if yq eval ".baseurl = \"$INPUT_BASEURL\"" -i "$DRJEKYLL_DOCS_DIR/_config-drjekyll.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq update of baseurl failed with exit code $command_status"
     group_end
     exit 1
   fi
@@ -546,8 +567,11 @@ function build_docs() {
   # Ensure mermaid config from _config-drjekyll.yml is merged into user's _config.yml
   # so it takes effect before Jekyll's remote theme processing.
   log_info "Merging mermaid configuration into user config..."
-  if ! yq eval '.mermaid |= . // (load("'$DRJEKYLL_DOCS_DIR'/_config-drjekyll.yml") | .mermaid)' -i "$DRJEKYLL_DOCS_DIR/_config.yml"; then
-    log_error "yq merge of mermaid config failed with exit code $?"
+  if yq eval '.mermaid |= . // (load("'$DRJEKYLL_DOCS_DIR'/_config-drjekyll.yml") | .mermaid)' -i "$DRJEKYLL_DOCS_DIR/_config.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq merge of mermaid config failed with exit code $command_status"
     group_end
     exit 1
   fi
@@ -572,7 +596,9 @@ function build_docs() {
 
   log_info "Jekyll build succeeded. Copying output from '$BUILD_TMP_DIR' to '$OUTPUT_DIR'..."
   mkdir -p "$OUTPUT_DIR"
-  if ! rsync -a --delete "$BUILD_TMP_DIR/" "$OUTPUT_DIR/"; then
+  if rsync -a --delete "$BUILD_TMP_DIR/" "$OUTPUT_DIR/"; then
+    :
+  else
     log_error "Failed to copy build output to '$OUTPUT_DIR'. Check that the directory is writable."
     rm -rf "$BUILD_TMP_DIR"
     group_end
@@ -600,22 +626,28 @@ function setup_work_dir() {
 
   # Layer 1: seed with drjekyll theme/framework files (exclude vendor to avoid copying large gem trees).
   log_info "Seeding work dir from DrJekyll docs '$DRJEKYLL_DOCS_DIR'..."
-  if ! rsync -a --exclude='vendor/' "$DRJEKYLL_DOCS_DIR/" "$DRJEKYLL_WORK_DIR/"; then
-    log_error "rsync of DrJekyll docs into work dir failed with exit code $?"
+  if rsync -a --exclude='vendor/' "$DRJEKYLL_DOCS_DIR/" "$DRJEKYLL_WORK_DIR/"; then
+    :
+  else
+    command_status=$?
+    log_error "rsync of DrJekyll docs into work dir failed with exit code $command_status"
     group_end
     exit 1
   fi
 
   # Layer 2: overlay user input files (same exclusions as the action merge).
   log_info "Overlaying input directory '$INPUT_DIR' onto work dir..."
-  if ! rsync -avL --ignore-times \
+  if rsync -avL --ignore-times \
       --exclude='Gemfile' \
       --exclude='Gemfile.lock' \
       --exclude='_config-drjekyll.yml' \
       --exclude='_includes/footer_custom.html' \
       --exclude='_includes/head_custom.html' \
       "$INPUT_DIR/" "$DRJEKYLL_WORK_DIR/"; then
-    log_error "rsync of input dir into work dir failed with exit code $?"
+    :
+  else
+    command_status=$?
+    log_error "rsync of input dir into work dir failed with exit code $command_status"
     group_end
     exit 1
   fi
@@ -668,22 +700,31 @@ function serve_docs() {
   local SERVE_DEST="$DRJEKYLL_WORK_DIR/_site"
 
   log_info "Setting destination in work dir _config-drjekyll.yml to '$SERVE_DEST' using yq..."
-  if ! yq eval ".destination = \"$SERVE_DEST\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
-    log_error "yq update of destination failed with exit code $?"
+  if yq eval ".destination = \"$SERVE_DEST\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq update of destination failed with exit code $command_status"
     group_end
     exit 1
   fi
 
   log_info "Setting url in work dir _config-drjekyll.yml to '$INPUT_URL' using yq..."
-  if ! yq eval ".url = \"$INPUT_URL\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
-    log_error "yq update of url failed with exit code $?"
+  if yq eval ".url = \"$INPUT_URL\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq update of url failed with exit code $command_status"
     group_end
     exit 1
   fi
 
   log_info "Setting baseurl in work dir _config-drjekyll.yml to '$INPUT_BASEURL' using yq..."
-  if ! yq eval ".baseurl = \"$INPUT_BASEURL\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
-    log_error "yq update of baseurl failed with exit code $?"
+  if yq eval ".baseurl = \"$INPUT_BASEURL\"" -i "$DRJEKYLL_WORK_DIR/_config-drjekyll.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq update of baseurl failed with exit code $command_status"
     group_end
     exit 1
   fi
@@ -691,8 +732,11 @@ function serve_docs() {
   # Ensure mermaid config from _config-drjekyll.yml is merged into user's _config.yml
   # so it takes effect before Jekyll's remote theme processing.
   log_info "Merging mermaid configuration into user config..."
-  if ! yq eval '.mermaid |= . // (load("'$DRJEKYLL_WORK_DIR'/_config-drjekyll.yml") | .mermaid)' -i "$DRJEKYLL_WORK_DIR/_config.yml"; then
-    log_error "yq merge of mermaid config failed with exit code $?"
+  if yq eval '.mermaid |= . // (load("'$DRJEKYLL_WORK_DIR'/_config-drjekyll.yml") | .mermaid)' -i "$DRJEKYLL_WORK_DIR/_config.yml"; then
+    :
+  else
+    command_status=$?
+    log_error "yq merge of mermaid config failed with exit code $command_status"
     group_end
     exit 1
   fi

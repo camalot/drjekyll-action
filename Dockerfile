@@ -3,13 +3,19 @@
 
 FROM ruby:3-slim-trixie
 
+ARG TARGETARCH=amd64
+ARG YQ_VERSION=4.44.3
+
 # Native gems (e.g., bigdecimal) require a compiler toolchain on slim images.
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends curl jq build-essential rsync openssl libssl-dev \
+	&& apt-get install -y --no-install-recommends curl build-essential rsync openssl libssl-dev \
 	&& rm -rf /var/lib/apt/lists/* \
-  && YQ_VERSION=$(curl -s "https://api.github.com/repos/mikefarah/yq/releases/latest" | jq -r ".tag_name" | sed 's/v//') \
-  && curl -X GET -Ls "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64" -o /usr/bin/yq \
-  && chmod +x /usr/bin/yq
+	&& curl --fail --location --retry 3 \
+		"https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_${TARGETARCH}" \
+		--output /tmp/yq \
+	&& chmod +x /tmp/yq \
+	&& /tmp/yq --version \
+	&& mv /tmp/yq /usr/local/bin/yq
 
 # Install Jekyll and Bundler
 RUN gem install bundler
