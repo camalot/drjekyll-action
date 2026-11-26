@@ -7,7 +7,6 @@ GEM
     bigdecimal (4.1.1)
     colorator (1.1.0)
     concurrent-ruby (1.3.6)
-    cssminify (1.0.2)
     csv (3.3.5)
     em-websocket (0.5.3)
       eventmachine (>= 0.12.9)
@@ -74,20 +73,17 @@ GEM
       safe_yaml (~> 1.0)
       terminal-table (>= 1.8, < 4.0)
       webrick (~> 1.7)
-    jekyll-gfm-admonitions (1.4.3)
-      cssminify (~> 1.0)
-      jekyll (>= 3.0, < 5.0)
-      octicons (~> 19.8)
     jekyll-include-cache (0.2.1)
       jekyll (>= 3.7, < 5.0)
-    jekyll-remote-theme (0.4.3)
+    jekyll-remote-theme (0.6.3)
       addressable (~> 2.0)
       jekyll (>= 3.5, < 5.0)
-      jekyll-sass-converter (>= 1.0, <= 3.0.0, != 2.0.0)
-      rubyzip (>= 1.3.0, < 3.0)
+      jekyll-sass-converter (>= 1.0, < 4.0, != 2.0.0)
+      openssl (>= 3.1.2)
+      rubyzip (>= 1.3.0, < 4.0)
     jekyll-sass-converter (3.0.0)
       sass-embedded (~> 1.54)
-    jekyll-seo-tag (2.8.0)
+    jekyll-seo-tag (2.9.1)
       jekyll (>= 3.8, < 5.0)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
@@ -108,7 +104,7 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
     mercenary (0.4.0)
-    octicons (19.28.0)
+    openssl (4.0.2)
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
     public_suffix (7.0.5)
@@ -178,12 +174,11 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  jekyll (~> 4.3)
-  jekyll-gfm-admonitions
-  jekyll-remote-theme
-  jekyll-seo-tag
-  just-the-docs (~> 0.10)
-  rouge (~> 4.0)
+  jekyll (~> 4.4)
+  jekyll-remote-theme (~> 0.6)
+  jekyll-seo-tag (~> 2.9)
+  just-the-docs (~> 0.12)
+  rouge (~> 4)
 
 CHECKSUMS
   addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
@@ -192,7 +187,6 @@ CHECKSUMS
   bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
   colorator (1.1.0) sha256=e2f85daf57af47d740db2a32191d1bdfb0f6503a0dfbc8327d0c9154d5ddfc38
   concurrent-ruby (1.3.6) sha256=6b56837e1e7e5292f9864f34b69c5a2cbc75c0cf5338f1ce9903d10fa762d5ab
-  cssminify (1.0.2) sha256=f574503558cd442c6286831ffdbebdb4587f6deb827ef7575f73f377a376a898
   csv (3.3.5) sha256=6e5134ac3383ef728b7f02725d9872934f523cb40b961479f69cf3afa6c8e73f
   em-websocket (0.5.3) sha256=f56a92bde4e6cb879256d58ee31f124181f68f8887bd14d53d5d9a292758c6a8
   eventmachine (1.2.7) sha256=994016e42aa041477ba9cff45cbe50de2047f25dd418eba003e84f0d16560972
@@ -220,11 +214,10 @@ CHECKSUMS
   http_parser.rb (0.8.1) sha256=9ae8df145b39aa5398b2f90090d651c67bd8e2ebfe4507c966579f641e11097a
   i18n (1.14.8) sha256=285778639134865c5e0f6269e0b818256017e8cde89993fdfcbfb64d088824a5
   jekyll (4.4.1) sha256=4c1144d857a5b2b80d45b8cf5138289579a9f8136aadfa6dd684b31fe2bc18c1
-  jekyll-gfm-admonitions (1.4.3) sha256=cff476cef85f4c8240d26270389d4cc5e9bedc54bb043bfdc0f91a38ecc1e0c3
   jekyll-include-cache (0.2.1) sha256=c7d4b9e551732a27442cb2ce853ba36a2f69c66603694b8c1184c99ab1a1a205
-  jekyll-remote-theme (0.4.3) sha256=d3fde726484fb3df04de9e347baf75aaa3d5bfea771a330412e0c52608e54b40
+  jekyll-remote-theme (0.6.3) sha256=a0f717528f801999b00949d0ff6a830d3e7b8f415a5a3da176aa76c15985eabe
   jekyll-sass-converter (3.0.0) sha256=e2e7674f186e906b9d99b8066e13f9b4d5cb9f806d36f7bc8cf2610053d8c902
-  jekyll-seo-tag (2.8.0) sha256=3f2ed1916d56f14ebfa38e24acde9b7c946df70cb183af2cb5f0598f21ae6818
+  jekyll-seo-tag (2.9.1) sha256=ed5c757a091048b6ef9109f856f84a29beaeb70f531ba5775a5e92129a28093e
   jekyll-watch (2.2.1) sha256=bc44ed43f5e0a552836245a54dbff3ea7421ecc2856707e8a1ee203a8387a7e1
   json (2.19.3) sha256=289b0bb53052a1fa8c34ab33cc750b659ba14a5c45f3fcf4b18762dc67c78646
   just-the-docs (0.12.0) sha256=15f2839ac9082898d60f33b978aa6f8e46fc50ba8fac20ae7a7f0e1fb295523e
@@ -234,7 +227,7 @@ CHECKSUMS
   listen (3.10.0) sha256=c6e182db62143aeccc2e1960033bebe7445309c7272061979bb098d03760c9d2
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   mercenary (0.4.0) sha256=b25a1e4a59adca88665e08e24acf0af30da5b5d859f7d8f38fba52c28f405138
-  octicons (19.28.0) sha256=6f83c6cac5afd07a6d963e54498ac187f23e74577f22dec2e8c3fe696f02a53a
+  openssl (4.0.2) sha256=1037ad2868ae58df9ad917891c0c0f9815a1172f6846d4bcdd508e4c2ee747c2
   pathutil (0.16.2) sha256=e43b74365631cab4f6d5e4228f812927efc9cb2c71e62976edcb252ee948d589
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
   rake (13.3.1) sha256=8c9e89d09f66a26a01264e7e3480ec0607f0c497a861ef16063604b1b08eb19c

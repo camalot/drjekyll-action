@@ -1,7 +1,7 @@
 # Need a base image with Jekyll and Ruby installed
 # The official Jekyll image is a good choice as it comes pre-configured with everything needed to build and serve Jekyll sites.
 
-FROM ruby:3-slim-trixie
+FROM ruby:4-slim-trixie
 
 ARG TARGETARCH=amd64
 ARG YQ_VERSION=4.44.3
